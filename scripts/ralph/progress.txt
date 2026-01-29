@@ -1,5 +1,14 @@
 # Ralph Progress Log
 Started: Thu Jan 29 23:40:51 +08 2026
+
+## Codebase Patterns
+- Use 'use server' directive at top of server function files in TanStack Start
+- Import OrderStatus from db/schema for type-safe status constants (not string literals)
+- Status transitions follow enum: pending → paid → generating → complete/failed/refunded
+- Singleton pattern for services (db, queue) ensures single instance across requests
+- API routes use POST handler with raw text body for Stripe webhook signature verification
+- Export helper functions and types from lib/ for reuse across server components
+
 ---
 ## Wed Jan 29 23:52:00 +08 2026 - US-001
 - Initialized TanStack Start project in muse-frame directory
@@ -317,3 +326,29 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Generate unique output filenames with UUID to avoid collisions
 - Separate output directory (generated/outputs/) from input uploads (uploads/) for organization
 - env.MODAL_TOKEN_ID and env.MODAL_TOKEN_SECRET must be set for Modal API calls
+
+## Thu Jan 30 14:30:00 +08 2026 - US-013
+- Created lib/server/queue.ts with in-memory job queue implementation
+- Queue worker processes jobs sequentially with automatic status transitions
+- Exposes enqueueGeneration(orderId, maxRetries) function for job submission
+- Updates order status: paid → generating → complete/failed
+- Fetches style promptTemplate from lib/styles.ts for AI generation
+- Supports retry logic (configurable max retries) for transient failures
+- Replaced placeholder code in stripe-webhook.ts with actual queue integration
+- Typecheck passes
+- Biome lint passes
+- Build passes
+
+**Files changed:**
+- muse-frame/src/lib/server/queue.ts (new)
+- muse-frame/src/routes/api/stripe-webhook.ts (modified - replaced placeholder with queue integration)
+- scripts/ralph/prd.json (modified - US-013 passes: true)
+
+**Learnings for future iterations:**
+- In-memory queues are suitable for single-instance MVP deployments but don't scale horizontally
+- Singleton pattern (GenerationQueue class) ensures single queue instance across requests
+- Sequential job processing prevents GPU resource contention and ensures no jobs are lost
+- Worker interval pattern (setInterval) provides automatic job processing without blocking
+- Import OrderStatus from schema for type-safe status constants (not string literals)
+- Status transitions must follow database enum: pending → paid → generating → complete/failed/refunded
+- Modal API generation can take several minutes - async queue processing prevents HTTP timeouts
