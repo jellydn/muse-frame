@@ -31,3 +31,27 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Vite 7+ is required for TanStack Start 1.x
 - Routes directory must exist at src/routes with __root.tsx for the root route
 ---
+
+## Wed Jan 29 23:58:00 +08 2026 - US-002
+- Created db/schema.ts with orders table definition
+- Orders table includes: id, email, style, status (enum), stripeSessionId, uploadPath, outputPath, regenerationUsed, createdAt, updatedAt
+- Created db/index.ts with better-sqlite3 database connection
+- Created lib/env.ts with environment variable schema
+- Created drizzle.config.json for Drizzle Kit configuration
+- Ran drizzle-kit push to create sqlite.db and apply schema
+- Typecheck passes
+
+**Files changed:**
+- muse-frame/src/db/schema.ts (new)
+- muse-frame/src/db/index.ts (new)
+- muse-frame/src/lib/env.ts (new)
+- muse-frame/drizzle.config.json (new)
+- muse-frame/package.json (modified - added better-sqlite3, drizzle-kit, @types/better-sqlite3, @types/node)
+- muse-frame/scripts/ralph/prd.json (modified - US-002 passes: true)
+
+**Learnings for future iterations:**
+- Drizzle Kit requires JSON config (.drizzle.config.json) for TypeScript projects - the .ts config format has issues with ESM require
+- Use drizzle-kit push for quick schema prototyping, then migrate to proper migrations for production
+- better-sqlite3 provides synchronous SQLite access ideal for server-side use
+- OrderStatus enum should be exported for use across the application
+---
