@@ -151,3 +151,34 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - UUID v4 with styleId prefix creates organized, unique filenames (e.g., princess/uuid.png)
 - env configuration in lib/env.ts provides centralized access to R2 credentials
 ---
+
+## Thu Jan 30 00:55:00 +08 2026 - US-007
+- Installed face-api.js library for client-side face detection
+- Downloaded tiny face detector model files to public/models/
+- Created lib/face-detection.ts with detectFaces function using TinyFaceDetector
+- Integrated face validation on upload page with status states: idle, validating, valid, invalid
+- Added visual feedback: spinner during validation, checkmark for success, error message for failures
+- Continue button is disabled until face validation passes (exactly 1 face detected)
+- Typecheck passes
+- Biome lint passes
+- Browser verification with Playwright passes (no console errors)
+
+**Files changed:**
+- muse-frame/src/lib/face-detection.ts (new)
+- muse-frame/src/routes/upload.tsx (modified - added face validation integration)
+- muse-frame/src/styles/global.css (modified - added validation status styles)
+- muse-frame/public/models/tiny_face_detector_model-weights_manifest.json (new)
+- muse-frame/public/models/tiny_face_detector_model-shard1 (new)
+- muse-frame/package.json (modified - added face-api.js)
+- muse-frame/pnpm-lock.yaml (modified)
+- scripts/ralph/prd.json (modified - US-007 passes: true)
+
+**Learnings for future iterations:**
+- face-api.js requires model files to be served statically from public/ directory
+- TinyFaceDetector is the smallest/fastest model, suitable for upload page validation
+- Use load promise singleton pattern to prevent multiple model loads
+- Client-side face detection keeps photos private (never sent to server before validation)
+- Visual validation feedback (spinner, check, error) improves UX during async validation
+- React state machine pattern (idle -> validating -> valid/invalid) handles async validation well
+- Playwright is excellent for verifying client-side functionality without manual browser testing
+---
