@@ -1,5 +1,5 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import '../styles/global.css'
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+import "../styles/global.css";
 
 export const Route = createRootRoute({
   component: () => (
@@ -7,4 +7,4 @@ export const Route = createRootRoute({
       <Outlet />
     </div>
   ),
-})
+});
