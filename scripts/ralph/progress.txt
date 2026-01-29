@@ -182,3 +182,30 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - React state machine pattern (idle -> validating -> valid/invalid) handles async validation well
 - Playwright is excellent for verifying client-side functionality without manual browser testing
 ---
+
+## Thu Jan 30 01:10:00 +08 2026 - US-008
+- Created lib/server/stripe.ts with createCheckout server function
+- Validates style exists using getStyleById from lib/styles
+- Validates email format with regex before proceeding
+- Creates order record with status 'pending' using Drizzle insert
+- Creates Stripe Checkout session with price from style configuration
+- Sets success_url to /order/{orderId}/status and cancel_url to /upload?style={styleId}
+- Stores Stripe session ID in order record for webhook matching
+- Returns checkoutUrl and orderId on success, error message on failure
+- Typecheck passes
+- Biome lint passes
+
+**Files changed:**
+- muse-frame/src/lib/server/stripe.ts (new)
+- muse-frame/scripts/ralph/prd.json (modified - US-008 passes: true)
+
+**Learnings for future iterations:**
+- Stripe API version must match the installed package version (2026-01-28.clover for stripe@^20.3.0)
+- Use 'use server' directive at top of server function files in TanStack Start
+- Import eq from drizzle-orm for Drizzle where clauses (not a custom function)
+- Order imports alphabetically: external libs first, then path aliases, then relative imports
+- Stripe Checkout session metadata can store orderId, styleId, uploadPath for webhook processing
+- env.R2_PUBLIC_URL is used for building success/cancel URLs (should be the app's base URL)
+- Use session.url for the checkout redirect URL (may be undefined for some payment methods)
+- Drizzle's .returning() method returns arrays even for single-row inserts
+---
