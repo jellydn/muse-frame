@@ -5,6 +5,7 @@ import { getDb } from '~/db'
 import { type OrderStatus, orders } from '~/db/schema'
 import { generatePortrait } from '~/lib/server/modal'
 import { getStyleById } from '~/lib/styles'
+import { sendDeliveryEmail } from './email'
 
 interface GenerationJob {
   orderId: number
@@ -111,6 +112,19 @@ class GenerationQueue {
     if (result.success && result.outputPath) {
       await this.updateOrderStatus(orderId, 'complete', undefined, result.outputPath)
       console.log(`Generation complete for order ${orderId}. Output: ${result.outputPath}`)
+
+      // Send delivery email
+      const emailResult = await sendDeliveryEmail(
+        orderId,
+        order.email,
+        style.name,
+        result.outputPath,
+      )
+      if (emailResult.success) {
+        console.log(`Delivery email sent for order ${orderId}`)
+      } else {
+        console.error(`Failed to send delivery email for order ${orderId}:`, emailResult.error)
+      }
     } else {
       const errorMessage = result.error || 'Generation failed'
       console.error(`Generation failed for order ${orderId}: ${errorMessage}`)
