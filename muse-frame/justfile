@@ -28,4 +28,10 @@ db_migrate:
 db_studio:
     npx drizzle-kit studio
 
+test:
+    pnpm test
+
+test_watch:
+    pnpm vitest watch
+
 check: typecheck lint build

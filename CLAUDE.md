@@ -1,1 +1,1 @@
-@./AGENTS.md
+@./muse-frame/AGENTS.md

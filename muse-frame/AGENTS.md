@@ -10,8 +10,7 @@ Muse Frame is an MVP web application for AI-generated personalized portraits. Us
 - **Working Directory**: `./muse-frame/`
 - **Package Manager**: pnpm
 - **Database**: SQLite (drizzle-orm)
-- **Storage**: Cloudflare R2 (AWS S3-compatible)
-- **Email**: Resend
+- **PRD**: `tasks/prd-muse-frame.md`
 
 ## Commands
 
@@ -28,7 +27,7 @@ just start         # Preview production build
 # Quality Checks
 just typecheck     # TypeScript type checking (REQUIRED)
 just lint          # Biome linter
-just format        # Format with Biome
+just format        # Apply Biome formatting
 just format_check  # Check formatting without applying
 just check         # Run typecheck + lint + build
 
@@ -37,68 +36,47 @@ just db_generate   # Generate Drizzle migrations
 just db_migrate    # Apply Drizzle migrations
 just db_studio     # Open Drizzle Studio
 
-# Testing
-just test          # Run Playwright E2E tests
+# Testing (Vitest)
+just test          # Run all tests
+just test run src/test/file.test.ts  # Run single test file
+just test:watch    # Watch mode
 ```
 
-**Package Manager**: Use `pnpm`:
+**Package Manager Commands**:
 ```bash
 pnpm install       # Install dependencies
 pnpm add <package> # Add dependency
-pnpm add -D <dev-package> # Add dev dependency
-```
-
-### Running Tests
-
-**Playwright** is installed for E2E tests:
-```bash
-# Run all tests
-pnpm playwright test
-
-# Run single test file
-pnpm playwright test path/to/test.spec.ts
-
-# Run with UI
-pnpm playwright test --ui
-```
-
-**For unit tests**, install Vitest:
-```bash
-pnpm add -D vitest
-vitest run filename.test.ts
 ```
 
 ## Code Style Guidelines
 
 ### Linter & Formatter
 
-**Biome** is configured with the following rules:
-
-- **Single quotes** only (`'string'`)
-- **Semicolons**: as needed (let Biome decide)
-- **2-space indentation**
-- **100 character line width**
-- **Sort imports alphabetically**
+- **Tool**: Biome v1.9.4
+- **Configuration** (`biome.json`):
+  - Single quotes only (`'string'`)
+  - Semicolons: as needed
+  - 2-space indentation
+  - 100 character line width
+  - Bracket spacing enabled
 
 **Fix issues automatically**:
 ```bash
 just format        # Apply formatting
-just lint          # Apply lint fixes
-pnpm lint --fix    # Apply lint fixes
+just lint          # Biome check (use --apply to fix)
 ```
 
 ### TypeScript
 
 - Strict mode enabled - no implicit `any` types
 - Explicit return types for exported functions
-- Prefer interfaces for object shapes, types for unions
-- Use `~/*` path aliases for imports from `./src/`
+- Prefer `interface` for object shapes, `type` for unions
 
 ### Imports & Path Aliases
 
-- Use path aliases: `~/*` maps to `./src/`
+- Use `~/*` path aliases (maps to `./src/`)
 - Named imports over default imports
-- Order: external libraries → path aliases → relative imports
+- **Order**: external libs → path aliases → relative imports
 
 ```typescript
 import { useState } from 'react'
@@ -107,34 +85,26 @@ import { formatDate } from '~/lib/utils'
 import { users } from './users'
 ```
 
-### JSX Guidelines
+### Naming Conventions
+
+- **Components/Routes**: PascalCase (`IndexPage`, `UploadPage`)
+- **Variables/Functions**: camelCase (`isValid`, `handleSubmit`)
+- **Constants**: SCREAMING_SNAKE_CASE (`MAX_FILE_SIZE`, `ALLOWED_MIME_TYPES`)
+- **Files**: kebab-case (`utils.ts`, `api-client.ts`, `stripe-webhook.ts`)
+- **Database tables/columns**: snake_case (`orders`, `created_at`)
+- **Types/Interfaces**: PascalCase (`PortraitStyle`, `CreateCheckoutResult`)
+
+**Function prefixes**:
+- `handle*` for event handlers (`handleDrop`, `handleContinue`)
+- `get*` for data retrieval (`getStylesByCategory`)
+
+### JSX
 
 - One expression per line
 - Self-closing tags for elements without children
 - Use parentheses for multi-line JSX
 
-```tsx
-return (
-  <div className="container">
-    {isLoading ? (
-      <Spinner />
-    ) : (
-      <Content data={data} />
-    )}
-  </div>
-)
-```
-
-### Naming Conventions
-
-- **Components/Routes**: PascalCase (`IndexPage`, `UploadPage`)
-- **Variables/Functions**: camelCase (`isValid`, `handleSubmit`)
-- **Constants**: SCREAMING_SNAKE_CASE (`MAX_FILE_SIZE`)
-- **Files**: kebab-case (`utils.ts`, `api-client.ts`)
-- **Database tables**: snake_case (`orders`, `users`)
-- **Database columns**: snake_case (`created_at`, `user_id`)
-
-### Component Structure
+## Component Pattern
 
 ```typescript
 import { createFileRoute } from '@tanstack/react-router'
@@ -144,103 +114,69 @@ export const Route = createFileRoute('/path')({
 })
 
 function PageComponent() {
+  // hooks at top
+  // handlers next
+  // render
   return <div>...</div>
 }
 ```
 
-### Error Handling
+## Error Handling
 
-- Guard clauses: return early for invalid states
-- Throw errors with meaningful messages
-- Try/catch in server actions
+**Guard clauses**: Return early for invalid states.
 
+**Result pattern** (common in server functions):
 ```typescript
+interface Result<T> {
+  success: boolean
+  data?: T
+  error?: string
+}
+
 if (!file) return
 if (file.size > MAX_FILE_SIZE) {
   throw new Error(`File too large: ${file.size} bytes (max: ${MAX_FILE_SIZE})`)
 }
 ```
 
+**Server functions**: Use try/catch with `console.error` logging.
+
+```typescript
+try {
+  // operation
+} catch (error) {
+  console.error('Operation failed:', error)
+  return { success: false, error: 'Failed to process' }
+}
+```
+
 ## Database (Drizzle ORM)
 
 ```typescript
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
-import { relations } from 'drizzle-orm'
+import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 
 export const orders = sqliteTable('orders', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   email: text('email').notNull(),
-  status: text('status', { enum: ['pending', 'processing', 'completed'] }).notNull(),
-  amount: real('amount').notNull(),
+  status: text('status').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
 })
-
-export const ordersRelations = relations(orders, ({ many }) => ({
-  items: many(orderItems),
-}))
 ```
 
 ## Common Tasks
 
 **Add route**: Create `src/routes/[path].tsx` with `createFileRoute` - auto-routes
 
-**Add API route**: Create server functions in `src/routes/api/`
+**Add API route**: Create server functions in `~/lib/server/`, marked with `'use server'`
 
 **Schema changes**: `just db_generate && just db_migrate`
 
 **Add new table**:
-1. Define schema in `src/db/schema.ts`
-2. Run `just db_generate`
-3. Run `just db_migrate`
-
-## Environment Setup
-
-Required environment variables (create `.env`):
-
-```env
-# Database
-DATABASE_URL=./sqlite.db
-
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-
-# Resend
-RESEND_API_KEY=re_...
-
-# Cloudflare R2
-R2_ACCESS_KEY_ID=...
-R2_SECRET_ACCESS_KEY=...
-R2_ACCOUNT_ID=...
-R2_BUCKET_NAME=muse-frame
-R2_PUBLIC_URL=https://...
-```
-
-## Project Structure
-
-```
-src/
-├── db/
-│   ├── schema.ts      # Database schema definitions
-│   └── index.ts       # Database connection & queries
-├── lib/
-│   ├── utils.ts       # Shared utility functions
-│   └── api.ts         # API client functions
-├── routes/
-│   ├── __root.tsx     # Root layout
-│   ├── index.tsx      # Home page (/)
-│   ├── upload.tsx     # Upload page (/upload)
-│   └── _layout.tsx    # Shared layout
-├── router.tsx         # Router configuration
-├── entry-client.tsx   # Client entry point
-├── entry-server.tsx   # Server entry point
-└── styles/            # CSS styles
-```
+1. Define schema in `~/db/schema.ts`
+2. Run migrations
 
 ## Notes
 
-- Run `just check` before committing changes
+- Run `just check` before committing
 - All acceptance criteria must include `Typecheck passes`
-- UI stories require browser verification per PRD
-- Use `just db_studio` to inspect database during development
 - Never commit `.env` files or secrets

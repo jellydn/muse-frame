@@ -1,6 +1,3 @@
-// Environment variables configuration
-// In production, these should be set in the deployment platform
-
 export const env = {
   DATABASE_URL:
     process.env.DATABASE_URL ||

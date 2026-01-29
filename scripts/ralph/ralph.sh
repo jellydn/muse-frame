@@ -98,6 +98,46 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Check for completion signal
   if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
     echo ""
+    echo "Completion signal detected. Validating..."
+
+    # Validate all stories have passes: true
+    FAILED_STORIES=$(jq -r '.userStories[] | select(.passes == false) | .id' "$PRD_FILE" 2>/dev/null || echo "")
+
+    if [ -n "$FAILED_STORIES" ]; then
+      echo "ERROR: Not all stories are complete!"
+      echo "Stories still pending:"
+      echo "$FAILED_STORIES"
+      echo ""
+      echo "Continuing to next iteration..."
+      sleep 2
+      continue
+    fi
+
+    echo ""
+    echo "All stories complete! Running final quality checks..."
+
+    # Run quality checks from project root
+    cd "$SCRIPT_DIR/../muse-frame"
+    if [ -f "package.json" ]; then
+      echo "Running typecheck..."
+      pnpm exec tsc --noEmit 2>/dev/null || {
+        echo "Typecheck failed! Continuing to fix issues..."
+        cd "$SCRIPT_DIR"
+        sleep 2
+        continue
+      }
+
+      echo "Running lint..."
+      pnpm exec biome check --write=false 2>/dev/null || {
+        echo "Lint failed! Continuing to fix issues..."
+        cd "$SCRIPT_DIR"
+        sleep 2
+        continue
+      }
+    fi
+    cd "$SCRIPT_DIR"
+
+    echo ""
     echo "Ralph completed all tasks!"
     echo "Completed at iteration $i of $MAX_ITERATIONS"
     exit 0

@@ -107,7 +107,6 @@ function OrderStatusPage() {
     setIsAutoRefreshing(false)
   }, [order.status])
 
-  // Status step configuration
   const statusSteps = [
     { key: 'paid', label: 'Payment' },
     { key: 'generating', label: 'Generating' },
@@ -124,12 +123,12 @@ function OrderStatusPage() {
     return 'upcoming'
   }
 
-  const formatDate = (date: Date): string => {
-    return new Intl.DateTimeFormat('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(new Date(date))
-  }
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
+
+  const formatDate = (date: Date): string => dateFormatter.format(date)
 
   return (
     <div className="status-page">
@@ -145,7 +144,6 @@ function OrderStatusPage() {
 
       <div className="container">
         <div className="status-content">
-          {/* Order Summary Card */}
           <div className="order-summary-card">
             <h2 className="summary-title">Order Details</h2>
 
@@ -165,11 +163,9 @@ function OrderStatusPage() {
             </div>
           </div>
 
-          {/* Status Progress */}
           <div className="progress-card">
             <h2 className="progress-title">Generation Progress</h2>
 
-            {/* Show appropriate message based on status */}
             {order.status === 'paid' && (
               <div className="status-message">
                 <span className="spinner" /> Payment confirmed! Your portrait is queued for
@@ -202,7 +198,6 @@ function OrderStatusPage() {
               </div>
             )}
 
-            {/* Progress Steps */}
             <div className="progress-steps">
               {statusSteps.map((step, index) => {
                 const stepStatus = getStepStatus(step.key)
@@ -230,13 +225,11 @@ function OrderStatusPage() {
               })}
             </div>
 
-            {/* Auto-refresh indicator */}
             {isAutoRefreshing && (
               <p className="auto-refresh-note">Status updates automatically every 5 seconds</p>
             )}
           </div>
 
-          {/* Download Card (shown when complete) */}
           {order.status === 'complete' && order.outputPath && (
             <div className="download-card">
               <h2 className="download-title">Your Portrait</h2>
@@ -254,12 +247,10 @@ function OrderStatusPage() {
                 Download link expires in 7 days. A copy has also been sent to {order.email}.
               </p>
 
-              {/* Regeneration Button */}
               {!order.regenerationUsed && <RegenerateButton orderId={order.id} />}
             </div>
           )}
 
-          {/* Failed Order with Regeneration Option */}
           {order.status === 'failed' && (
             <div className="download-card">
               <h2 className="download-title">Generation Failed</h2>

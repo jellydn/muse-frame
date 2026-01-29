@@ -28,9 +28,6 @@ export interface OrderListItem {
   updatedAt: Date
 }
 
-/**
- * Get all orders with pagination and filtering
- */
 export function getAdminOrders(options?: {
   status?: string
   limit?: number
@@ -62,9 +59,6 @@ export function getAdminOrders(options?: {
   }))
 }
 
-/**
- * Get order summary statistics
- */
 export function getOrderSummary(): AdminOrderSummary {
   const allOrders = getDb().select().from(orders).all()
 
@@ -85,59 +79,39 @@ export function getOrderSummary(): AdminOrderSummary {
   }
 }
 
-/**
- * Retry generation for a failed order (admin function)
- */
 export async function adminRetryGeneration(
   orderId: number,
 ): Promise<{ success: boolean; error?: string }> {
   const order = getDb().select().from(orders).where(eq(orders.id, orderId)).get()
 
-  if (!order) {
-    return { success: false, error: 'Order not found' }
-  }
+  if (!order) return { success: false, error: 'Order not found' }
 
-  // Can retry failed orders or orders where regeneration wasn't used
   const canRetry =
     order.status === 'failed' || (order.status === 'complete' && !order.regenerationUsed)
 
-  if (!canRetry) {
-    return { success: false, error: 'Order is not eligible for retry' }
-  }
+  if (!canRetry) return { success: false, error: 'Order is not eligible for retry' }
 
-  // Reset regenerationUsed flag for retry
   getDb()
     .update(orders)
     .set({ status: OrderStatus.Paid, regenerationUsed: false, updatedAt: new Date() })
     .where(eq(orders.id, orderId))
 
-  // Enqueue generation
   retryGeneration(orderId)
 
-  console.log(`Admin retry initiated for order ${orderId}`)
   return { success: true }
 }
 
-/**
- * Process refund for an order (admin function)
- */
 export async function adminRefundOrder(
   orderId: number,
   reason?: string,
 ): Promise<{ success: boolean; error?: string }> {
   const order = getDb().select().from(orders).where(eq(orders.id, orderId)).get()
 
-  if (!order) {
-    return { success: false, error: 'Order not found' }
-  }
+  if (!order) return { success: false, error: 'Order not found' }
 
-  // Can only refund paid or failed orders (refunded status is already excluded)
   const isRefundable = order.status === 'paid' || order.status === 'failed'
-  if (!isRefundable) {
-    return { success: false, error: 'Order cannot be refunded' }
-  }
+  if (!isRefundable) return { success: false, error: 'Order cannot be refunded' }
 
-  // Process refund via Stripe if we have a session ID
   if (order.stripeSessionId) {
     try {
       await stripe.refunds.create({
@@ -150,7 +124,6 @@ export async function adminRefundOrder(
     }
   }
 
-  // Update order status
   getDb()
     .update(orders)
     .set({
@@ -159,6 +132,6 @@ export async function adminRefundOrder(
     })
     .where(eq(orders.id, orderId))
 
-  console.log(`Order ${orderId} refunded. Reason: ${reason || 'Not specified'}`)
+  if (reason) console.log(`Order ${orderId} refunded. Reason: ${reason}`)
   return { success: true }
 }

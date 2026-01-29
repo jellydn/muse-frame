@@ -1,12 +1,12 @@
 'use server'
 
-import { DeleteObjectCommand } from '@aws-sdk/client-s3'
+import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { eq, lt } from 'drizzle-orm'
 import { getDb } from '~/db'
 import { orders } from '~/db/schema'
 import { env } from '~/lib/env'
 
-const s3Client = new (await import('@aws-sdk/client-s3')).S3Client({
+const s3Client = new S3Client({
   region: 'auto',
   endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
@@ -20,21 +20,15 @@ interface CleanupResult {
   errors: string[]
 }
 
-/**
- * Clean up uploaded photos older than 7 days
- * This function should be run as a scheduled job (e.g., daily via cron)
- */
 export async function cleanupOldUploads(): Promise<CleanupResult> {
   const result: CleanupResult = {
     deletedCount: 0,
     errors: [],
   }
 
-  // Calculate the cutoff date (7 days ago)
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-  // Find orders with uploads older than 7 days that still have their uploadPath
   const oldOrders = getDb().select().from(orders).where(lt(orders.createdAt, sevenDaysAgo)).all()
 
   for (const order of oldOrders) {
@@ -48,7 +42,6 @@ export async function cleanupOldUploads(): Promise<CleanupResult> {
 
       await s3Client.send(deleteCommand)
 
-      // Clear the uploadPath from the database
       getDb().update(orders).set({ uploadPath: null }).where(eq(orders.id, order.id))
 
       result.deletedCount++

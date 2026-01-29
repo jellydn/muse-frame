@@ -5,7 +5,7 @@ import Stripe from 'stripe'
 import { getDb } from '~/db'
 import { orders } from '~/db/schema'
 import { env } from '~/lib/env'
-import { generationQueue } from '~/lib/server/queue'
+import { enqueueGeneration } from '~/lib/server/queue'
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2026-01-28.clover',
@@ -79,5 +79,5 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   console.log(`Order ${orderIdNum} marked as paid`)
 
   // Trigger generation job via the queue
-  generationQueue.enqueueGeneration(orderIdNum)
+  enqueueGeneration(orderIdNum)
 }

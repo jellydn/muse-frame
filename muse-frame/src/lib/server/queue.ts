@@ -13,7 +13,7 @@ interface Job {
   maxRetries: number
 }
 
-let queue: Job[] = []
+const queue: Job[] = []
 let processing = false
 
 async function processJob(job: Job): Promise<void> {
@@ -42,7 +42,6 @@ async function processJob(job: Job): Promise<void> {
 
   if (result.success && result.outputPath) {
     await updateOrderStatus(orderId, 'complete', undefined, result.outputPath)
-    console.log(`Generation complete for order ${orderId}. Output: ${result.outputPath}`)
     await sendDeliveryEmail(orderId, order.email, style.name, result.outputPath)
   } else {
     const errorMessage = result.error || 'Generation failed'
@@ -79,14 +78,13 @@ async function runWorker(): Promise<void> {
   if (processing || queue.length === 0) return
 
   processing = true
-  const job = queue.shift()!
+  const job = queue.shift()
   if (job) await processJob(job)
   processing = false
 }
 
 export function enqueueGeneration(orderId: number, maxRetries = 1): void {
   queue.push({ orderId, retryCount: 0, maxRetries })
-  console.log(`Generation job enqueued for order ${orderId}. Queue size: ${queue.length}`)
   runWorker()
 }
 
@@ -104,7 +102,7 @@ export async function retryGeneration(
   await getDb()
     .update(orders)
     .set({
-      status: order.status === 'complete' ? ('paid' as const) : ('paid' as const),
+      status: 'paid' as const,
       regenerationUsed: order.status === 'complete' ? false : undefined,
       updatedAt: new Date(),
     })

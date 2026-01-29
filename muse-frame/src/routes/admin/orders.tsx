@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import {
+  type OrderListItem,
   adminRefundOrder,
   adminRetryGeneration,
   getAdminOrders,
@@ -17,25 +18,11 @@ export const Route = createFileRoute('/admin/orders')({
   },
 })
 
-interface OrderListItem {
-  id: number
-  email: string
-  style: string
-  status: string
-  outputPath: string | null
-  regenerationUsed: boolean
-  createdAt: Date
-  updatedAt: Date
-}
-
-interface OrderSummary {
-  total: number
-  byStatus: Record<string, number>
-  successRate: number
-}
-
 function AdminOrdersPage() {
-  const data = Route.useLoaderData() as { orders: OrderListItem[]; summary: OrderSummary }
+  const data = Route.useLoaderData() as {
+    orders: OrderListItem[]
+    summary: ReturnType<typeof getOrderSummary>
+  }
   const [orders, setOrders] = useState(data.orders)
   const [summary, setSummary] = useState(data.summary)
   const [statusFilter, setStatusFilter] = useState('all')
@@ -104,18 +91,13 @@ function AdminOrdersPage() {
   }
 
   const getStatusBadgeClass = (status: string): string => {
-    switch (status) {
-      case 'complete':
-        return 'status-badge complete'
-      case 'failed':
-        return 'status-badge failed'
-      case 'refunded':
-        return 'status-badge refunded'
-      case 'generating':
-        return 'status-badge generating'
-      default:
-        return 'status-badge'
+    const statusClasses: Record<string, string> = {
+      complete: 'status-badge complete',
+      failed: 'status-badge failed',
+      refunded: 'status-badge refunded',
+      generating: 'status-badge generating',
     }
+    return statusClasses[status] || 'status-badge'
   }
 
   return (
@@ -130,7 +112,6 @@ function AdminOrdersPage() {
       </div>
 
       <div className="container">
-        {/* Summary Cards */}
         <div className="summary-cards">
           <div className="summary-card">
             <h3 className="summary-card-title">Total Orders</h3>
@@ -156,7 +137,6 @@ function AdminOrdersPage() {
 
         {actionError && <p className="error-banner">{actionError}</p>}
 
-        {/* Orders Table */}
         <div className="orders-section">
           <div className="orders-header">
             <h2 className="orders-title">Orders</h2>
