@@ -617,3 +617,320 @@ a {
     font-size: 1.25rem;
   }
 }
+
+/* Status Page */
+.status-page {
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.status-header {
+  padding: 24px 20px;
+  margin-bottom: 40px;
+}
+
+.status-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.order-id {
+  font-size: 1rem;
+  color: #888;
+}
+
+.status-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+}
+
+/* Order Summary Card */
+.order-summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.summary-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.summary-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.summary-value {
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+/* Progress Card */
+.progress-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.progress-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+/* Status Messages */
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: #fff3e0;
+  color: #e65100;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.status-message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-message.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-message.warning {
+  background-color: #fff8e1;
+  color: #f57f17;
+}
+
+/* Progress Steps */
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.progress-step-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.step-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.progress-step.upcoming .step-indicator {
+  background-color: #f0f0f0;
+  color: #888;
+}
+
+.progress-step.current .step-indicator {
+  background-color: #667eea;
+  color: white;
+}
+
+.progress-step.complete .step-indicator {
+  background-color: #4caf50;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+
+.progress-step.current .step-label {
+  color: #1a1a2e;
+  font-weight: 500;
+}
+
+.progress-step.complete .step-label {
+  color: #2e7d32;
+}
+
+/* Step Connector */
+.step-connector {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  margin-bottom: 24px;
+}
+
+.connector-line {
+  width: 100%;
+  height: 3px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+}
+
+.step-connector.complete .connector-line {
+  background-color: #4caf50;
+}
+
+/* Auto-refresh Note */
+.auto-refresh-note {
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+  margin-top: 16px;
+  font-style: italic;
+}
+
+/* Download Card */
+.download-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.download-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.download-actions {
+  margin-bottom: 16px;
+}
+
+.download-button {
+  display: inline-block;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.download-note {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* Error Page */
+.error-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+}
+
+.error-page .container {
+  text-align: center;
+  padding: 40px;
+}
+
+.error-page h1 {
+  font-size: 2rem;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+
+.error-page p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Mobile responsive for status page */
+@media (max-width: 768px) {
+  .status-title {
+    font-size: 1.5rem;
+  }
+
+  .summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .progress-steps {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .progress-step-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .step-connector {
+    transform: rotate(90deg);
+    width: 40px;
+    margin: -8px 0;
+  }
+
+  .progress-step {
+    flex-direction: row;
+    gap: 12px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .step-indicator {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .step-label {
+    text-align: left;
+  }
+}

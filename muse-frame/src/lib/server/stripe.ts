@@ -2,7 +2,7 @@
 
 import { eq } from 'drizzle-orm'
 import Stripe from 'stripe'
-import { db } from '~/db'
+import { getDb } from '~/db'
 import { orders } from '~/db/schema'
 import { env } from '~/lib/env'
 import { getStyleById } from '~/lib/styles'
@@ -43,7 +43,7 @@ export async function createCheckout(
 
   try {
     // Create order record with status 'pending'
-    const [order] = await db
+    const [order] = await getDb()
       .insert(orders)
       .values({
         email,
@@ -86,7 +86,7 @@ export async function createCheckout(
     })
 
     // Update order with Stripe session ID
-    await db
+    await getDb()
       .update(orders)
       .set({
         stripeSessionId: session.id,

@@ -2,7 +2,9 @@
 // In production, these should be set in the deployment platform
 
 export const env = {
-  DATABASE_URL: process.env.DATABASE_URL || 'file:./sqlite.db',
+  DATABASE_URL:
+    process.env.DATABASE_URL ||
+    'file:/Users/huynhdung/src/tries/2026-01-29-muse-frame/muse-frame/sqlite.db',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
   RESEND_API_KEY: process.env.RESEND_API_KEY || '',

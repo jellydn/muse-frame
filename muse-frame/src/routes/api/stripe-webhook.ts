@@ -2,7 +2,7 @@
 
 import { eq } from 'drizzle-orm'
 import Stripe from 'stripe'
-import { db } from '~/db'
+import { getDb } from '~/db'
 import { orders } from '~/db/schema'
 import { env } from '~/lib/env'
 
@@ -67,7 +67,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Update order status from 'pending' to 'paid'
-  await db
+  await getDb()
     .update(orders)
     .set({
       status: 'paid',
@@ -91,7 +91,7 @@ async function triggerGenerationJob(orderId: number) {
   setTimeout(async () => {
     try {
       // Update status to 'generating'
-      await db
+      await getDb()
         .update(orders)
         .set({
           status: 'generating',
@@ -119,7 +119,7 @@ async function simulateGeneration(orderId: number) {
 
     // For demo purposes, we'll just log and update to 'complete'
     // In production, this would call Modal API and upload result to R2
-    await db
+    await getDb()
       .update(orders)
       .set({
         status: 'complete',
@@ -131,7 +131,7 @@ async function simulateGeneration(orderId: number) {
     console.log(`Order ${orderId} generation complete`)
   } catch (error) {
     console.error(`Generation failed for order ${orderId}:`, error)
-    await db
+    await getDb()
       .update(orders)
       .set({
         status: 'failed',

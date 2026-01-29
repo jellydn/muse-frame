@@ -234,3 +234,25 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Loading state disables form inputs to prevent double submissions
 - Error messages should be prominent and use distinct styling (red background)
 ---
+## Thu Jan 30 01:40:00 +08 2026 - US-010
+- Created API route at routes/api/stripe-webhook.ts for Stripe webhooks
+- Implemented webhook signature verification using stripe.webhooks.constructEvent
+- Handle checkout.session.completed event to update order status
+- Update order status from 'pending' to 'paid' when payment succeeds
+- Added placeholder generation job trigger (will be expanded in US-013)
+- Simulates generation flow: pending -> paid -> generating -> complete
+- Typecheck passes
+- Biome lint passes
+
+**Files changed:**
+- muse-frame/src/routes/api/stripe-webhook.ts (new)
+
+**Learnings for future iterations:**
+- API routes in TanStack Start use file-based routing similar to Next.js
+- POST handler required for Stripe webhooks (Stripe sends POST requests)
+- Webhook signature verification is critical for security (prevents spoofing)
+- Stripe webhook payload must be read as raw text, not parsed JSON
+- Use Number.parseInt and Number.isNaN for type-safe number parsing
+- Event metadata from checkout session can be used to correlate orders
+- Always return 200 OK to Stripe even on errors (Stripe will retry on 5xx)
+---
