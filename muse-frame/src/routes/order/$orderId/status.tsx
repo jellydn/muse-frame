@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { getOrderById } from '~/lib/server/orders'
+import { getOrderById, regeneratePortrait } from '~/lib/server/orders'
 import { getStyleById } from '~/lib/styles'
 
 export const Route = createFileRoute('/order/$orderId/status')({
@@ -28,6 +28,51 @@ export const Route = createFileRoute('/order/$orderId/status')({
     )
   },
 })
+
+function RegenerateButton({ orderId }: { orderId: number }) {
+  const [isRegenerating, setIsRegenerating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleRegenerate = async () => {
+    setIsRegenerating(true)
+    setError(null)
+
+    try {
+      const result = await regeneratePortrait(orderId)
+      if (result.success) {
+        // Reload to show generating status
+        window.location.reload()
+      } else {
+        setError(result.error || 'Failed to start regeneration')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsRegenerating(false)
+    }
+  }
+
+  return (
+    <div className="regeneration-section">
+      <button
+        type="button"
+        onClick={handleRegenerate}
+        disabled={isRegenerating}
+        className="regenerate-button"
+      >
+        {isRegenerating ? (
+          <>
+            <span className="spinner" /> Starting regeneration...
+          </>
+        ) : (
+          'Regenerate Portrait (1 remaining)'
+        )}
+      </button>
+      {error && <p className="regenerate-error">{error}</p>}
+      <p className="regenerate-note">A new portrait will be generated and emailed to you.</p>
+    </div>
+  )
+}
 
 function OrderStatusPage() {
   const data = Route.useLoaderData() as {
@@ -74,14 +119,8 @@ function OrderStatusPage() {
     const currentIndex = statusOrder.indexOf(order.status)
     const stepIndex = statusOrder.indexOf(stepKey)
 
-    if (stepIndex < currentIndex) {
-      return 'complete'
-    }
-
-    if (stepIndex === currentIndex) {
-      return 'current'
-    }
-
+    if (stepIndex < currentIndex) return 'complete'
+    if (stepIndex === currentIndex) return 'current'
     return 'upcoming'
   }
 
@@ -214,6 +253,20 @@ function OrderStatusPage() {
               <p className="download-note">
                 Download link expires in 7 days. A copy has also been sent to {order.email}.
               </p>
+
+              {/* Regeneration Button */}
+              {!order.regenerationUsed && <RegenerateButton orderId={order.id} />}
+            </div>
+          )}
+
+          {/* Failed Order with Regeneration Option */}
+          {order.status === 'failed' && (
+            <div className="download-card">
+              <h2 className="download-title">Generation Failed</h2>
+              <p className="download-note">
+                We couldn&apos;t generate your portrait. You can try again once.
+              </p>
+              <RegenerateButton orderId={order.id} />
             </div>
           )}
         </div>

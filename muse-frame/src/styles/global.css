@@ -864,6 +864,52 @@ a {
   color: #888;
 }
 
+/* Regeneration Section */
+.regeneration-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.regenerate-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.regenerate-button:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.regenerate-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.regenerate-error {
+  color: #c62828;
+  font-size: 0.9rem;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.regenerate-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 12px;
+}
+
 /* Error Page */
 .error-page {
   min-height: 100vh;
@@ -932,5 +978,316 @@ a {
 
   .step-label {
     text-align: left;
+  }
+}
+
+/* Admin Login Page */
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+  padding: 20px;
+}
+
+.admin-login-container {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.admin-login-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.form-input {
+  padding: 14px 16px;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.error-message {
+  color: #c62828;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.submit-button {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Admin Dashboard */
+.admin-page {
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.admin-header {
+  padding: 24px 20px;
+  margin-bottom: 32px;
+}
+
+.admin-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+/* Summary Cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.summary-card-title {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.summary-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.error-banner {
+  background: #ffebee;
+  color: #c62828;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* Orders Section */
+.orders-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.orders-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.status-filter {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
+
+/* Orders Table */
+.orders-table-container {
+  overflow-x: auto;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.orders-table th {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.order-email {
+  color: #1a1a2e;
+}
+
+.order-style {
+  text-transform: capitalize;
+}
+
+.order-date {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  background: #f0f0f0;
+  color: #666;
+}
+
+.status-badge.complete {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.failed {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.refunded {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.status-badge.generating {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Action Buttons */
+.order-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-button {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button.retry {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.action-button.retry:hover:not(:disabled) {
+  background: #bbdefb;
+}
+
+.action-button.refund {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.action-button.refund:hover:not(:disabled) {
+  background: #ffcdd2;
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.no-orders {
+  text-align: center;
+  color: #888;
+  padding: 40px !important;
+}
+
+/* Mobile responsive for admin */
+@media (max-width: 768px) {
+  .admin-title {
+    font-size: 1.5rem;
+  }
+
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-card-value {
+    font-size: 1.5rem;
+  }
+
+  .orders-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
   }
 }

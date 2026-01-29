@@ -15,6 +15,7 @@ export const env = {
   R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || '',
   MODAL_TOKEN_ID: process.env.MODAL_TOKEN_ID || '',
   MODAL_TOKEN_SECRET: process.env.MODAL_TOKEN_SECRET || '',
+  ADMIN_SECRET: process.env.ADMIN_SECRET || 'muse-frame-admin-secret',
 }
 
 export type EnvSchema = typeof env

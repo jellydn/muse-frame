@@ -352,3 +352,49 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Import OrderStatus from schema for type-safe status constants (not string literals)
 - Status transitions must follow database enum: pending → paid → generating → complete/failed/refunded
 - Modal API generation can take several minutes - async queue processing prevents HTTP timeouts
+
+## Thu Jan 30 17:15:00 +08 2026 - US-014
+- Created lib/server/email.ts with sendDeliveryEmail server function
+- Added generateSignedDownloadUrl helper using @aws-sdk/s3-request-presigner
+- Signed URLs are valid for 7 days (configurable)
+- Integrated email sending into queue.ts when order status changes to 'complete'
+- Email includes order ID, style name, and secure download link
+- Resend API sends HTML email with styled download button
+- Typecheck passes, Biome lint passes, Build passes
+
+**Files changed:**
+- muse-frame/src/lib/server/email.ts (new)
+- muse-frame/src/lib/server/queue.ts (modified - integrated email sending)
+- muse-frame/package.json (modified - added @aws-sdk/s3-request-presigner)
+- muse-frame/pnpm-lock.yaml (modified)
+- scripts/ralph/prd.json (modified - US-014 passes: true)
+
+**Learnings for future iterations:**
+- @aws-sdk/s3-request-presigner provides getSignedUrl for generating temporary R2 download URLs
+- Signed URLs automatically expire after specified duration (7 days = 604800 seconds)
+- Resend API response is a discriminated union type - handle both success and error cases
+- Email sending should be fire-and-forget after generation completes to avoid blocking
+- Reuse S3Client instance across upload and signed URL operations for efficiency
+---
+
+## Thu Jan 30 18:00:00 +08 2026 - US-015
+- Created download API route at routes/api/download/$orderId.ts
+- API validates order exists and status is 'complete' with valid outputPath
+- Generates signed R2 URL valid for 7 days using generateSignedDownloadUrl
+- Redirects to signed URL for direct file download
+- Status page shows download button when order status is 'complete'
+- Download button opens image in new tab with target="_blank"
+- Added expiration notice showing "Download link expires in 7 days"
+- Typecheck passes, Biome lint passes
+
+**Files changed:**
+- muse-frame/src/routes/api/download/$orderId.ts (new)
+- muse-frame/src/routes/order/$orderId/status.tsx (modified - added download section)
+- scripts/ralph/prd.json (modified - US-015 passes: true)
+
+**Learnings for future iterations:**
+- TanStack Router API routes use GET handler with params in request
+- API route validation should check both order existence AND status before generating URL
+- Response.redirect() with 302 status performs the actual download redirect
+- Signed URLs are generated on-demand, not stored - prevents unauthorized access after expiration
+- Client-side target="_blank" with rel="noopener noreferrer" is security best practice
