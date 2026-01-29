@@ -256,3 +256,40 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Event metadata from checkout session can be used to correlate orders
 - Always return 200 OK to Stripe even on errors (Stripe will retry on 5xx)
 ---
+
+## Thu Jan 30 01:55:00 +08 2026 - US-011
+- Created order status page at routes/order/$orderId/status.tsx
+- Created getOrderById server function in lib/server/orders.ts
+- Display order details (email, style, order date)
+- Show progress steps: Payment → Generating → Complete with visual indicators
+- Auto-refresh status every 5 seconds when status is 'paid' or 'generating'
+- Display appropriate status messages for each order state (paid/generating/complete/failed/refunded)
+- Show download button when order is complete
+- Implement 404 error component for non-existent orders
+- Added CSS styles for status page (order summary, progress steps, download card)
+- Implemented lazy database loading to avoid startup errors
+- Typecheck passes
+- Biome lint passes
+- Browser verification with Playwright passes (no JavaScript errors)
+
+**Files changed:**
+- muse-frame/src/routes/order/$orderId/status.tsx (new)
+- muse-frame/src/lib/server/orders.ts (new)
+- muse-frame/src/db/index.ts (modified - lazy db loading with getDb())
+- muse-frame/src/lib/env.ts (modified - absolute database path)
+- muse-frame/src/lib/server/stripe.ts (modified - use getDb())
+- muse-frame/src/routes/api/stripe-webhook.ts (modified - use getDb())
+- muse-frame/src/styles/global.css (modified - status page styles)
+- muse-frame/scripts/ralph/prd.json (modified - US-011 passes: true)
+
+**Learnings for future iterations:**
+- TanStack Router dynamic routes use $orderId syntax: routes/order/$orderId/status.tsx creates /order/:orderId/status
+- Route loaders run on server and can access server functions directly
+- Use Route.useLoaderData() to access loader data in component
+- Use Route.errorComponent for 404 handling when order not found
+- Auto-refresh using setInterval in useEffect with window.location.reload() for simple status polling
+- better-sqlite3 Database constructor fails if path doesn't resolve correctly - use absolute paths
+- Database connections created at module level cause startup failures - use lazy initialization pattern
+- getDb() singleton pattern ensures single database connection across requests
+- Vite module runner caches modules aggressively - clear .vite cache when making structural changes
+- 404 errors for missing static assets (images) are expected and don't indicate JavaScript errors
