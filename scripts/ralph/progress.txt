@@ -1,0 +1,33 @@
+# Ralph Progress Log
+Started: Thu Jan 29 23:40:51 +08 2026
+---
+## Wed Jan 29 23:52:00 +08 2026 - US-001
+- Initialized TanStack Start project in muse-frame directory
+- Set up file-based routing with TanStack Router
+- Installed dependencies: @tanstack/react-router, @tanstack/react-start, @tanstack/react-start-plugin, @vitejs/plugin-react, vite, vite-tsconfig-paths, react, react-dom
+- Installed core dependencies: drizzle-orm, stripe, resend, @aws-sdk/client-s3
+- Installed dev dependencies: drizzle-kit, better-sqlite3, typescript, @types/react, @types/react-dom
+- Configured app.config.ts with project name "Muse Frame"
+- Configured vite.config.ts with TanStack Start plugin
+- Dev server starts successfully on http://localhost:3000
+- Typecheck passes
+
+**Files changed:**
+- muse-frame/package.json (new)
+- muse-frame/tsconfig.json (new)
+- muse-frame/vite.config.ts (new)
+- muse-frame/app.config.ts (new)
+- muse-frame/src/router.tsx (new)
+- muse-frame/src/routes/__root.tsx (new)
+- muse-frame/src/routes/index.tsx (new)
+- muse-frame/src/entry-client.tsx (new)
+- muse-frame/src/entry-server.tsx (new)
+
+**Learnings for future iterations:**
+- TanStack Start uses file-based routing with the TanStack Router bundler plugin
+- The routeTree.gen.ts is auto-generated when the dev server runs
+- The @tanstack/react-start-plugin package provides the vite plugin for TanStack Start
+- createFileRoute API takes path parameter (e.g., '/', '/posts/:id')
+- Vite 7+ is required for TanStack Start 1.x
+- Routes directory must exist at src/routes with __root.tsx for the root route
+---

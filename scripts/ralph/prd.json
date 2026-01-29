@@ -1,0 +1,376 @@
+{
+  "project": "Muse Frame",
+  "branchName": "ralph/muse-frame-mvp",
+  "description": "AI Personalized Portraits MVP - Upload photo, select style, pay, receive AI-generated portrait",
+  "techStack": {
+    "framework": "TanStack Start (npm create @tanstack/start@latest)",
+    "database": "SQLite via Drizzle ORM",
+    "storage": "Cloudflare R2",
+    "email": "Resend",
+    "payments": "Stripe Checkout",
+    "ai": "Modal with Stable Diffusion/FLUX",
+    "cli": "https://github.com/TanStack/cli"
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Initialize TanStack Start project",
+      "description": "As a developer, I need to scaffold the project with TanStack Start CLI so that we have the base structure.",
+      "acceptanceCriteria": [
+        "Run 'npm create @tanstack/start@latest' to create muse-frame project",
+        "Install core dependencies: drizzle-orm, stripe, resend, @aws-sdk/client-s3",
+        "Configure app.config.ts with project settings",
+        "Dev server starts successfully with 'npm run dev'",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Use TanStack CLI from https://tanstack.com/cli/latest/docs/quick-start"
+    },
+    {
+      "id": "US-002",
+      "title": "Setup database schema with Drizzle",
+      "description": "As a developer, I need to define the orders table schema so that we can store order data.",
+      "acceptanceCriteria": [
+        "Create db/schema.ts with orders table",
+        "Orders table has: id, email, style, status (pending|paid|generating|complete|failed|refunded), stripeSessionId, uploadPath, outputPath, regenerationUsed (boolean), createdAt, updatedAt",
+        "Create db/index.ts with database connection",
+        "Generate and run initial migration",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Create styles configuration",
+      "description": "As a developer, I need to define the style catalog so that styles are centrally managed.",
+      "acceptanceCriteria": [
+        "Create lib/styles.ts with style definitions",
+        "Each style has: id, name, description, category (girls|boys|unisex), price, previewImage, promptTemplate",
+        "Include styles: Princess, Fantasy (girls), Superheroes, Fantasy (boys), National Culture, Pre-school Graduation (unisex)",
+        "All styles priced at $10 (1000 cents)",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Create landing page with style grid",
+      "description": "As a visitor, I want to see available portrait styles with previews so that I can choose one.",
+      "acceptanceCriteria": [
+        "Create routes/index.tsx as landing page",
+        "Display hero section with value proposition",
+        "Show style grid organized by category (Girls, Boys, Unisex)",
+        "Each style card shows: preview image, name, description, price",
+        "Clicking style card navigates to /upload?style={styleId}",
+        "Page is mobile-responsive",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Create upload page UI",
+      "description": "As a user, I want to see an upload form so that I can submit my photo.",
+      "acceptanceCriteria": [
+        "Create routes/upload.tsx page",
+        "Read style from URL query param, redirect to / if missing",
+        "Show selected style info at top",
+        "Display drag-and-drop upload zone",
+        "Show photo requirements: JPEG/PNG, max 10MB, single face, clear photo",
+        "Preview uploaded image before submission",
+        "Continue button navigates to checkout",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Implement photo upload server function",
+      "description": "As a system, I need to handle photo uploads and store them in R2.",
+      "acceptanceCriteria": [
+        "Create server function uploadPhoto in lib/server/upload.ts",
+        "Validate file type (JPEG/PNG only)",
+        "Validate file size (max 10MB)",
+        "Generate unique filename with UUID",
+        "Upload to Cloudflare R2 bucket",
+        "Return upload path on success",
+        "Return error message on failure",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Add face detection validation",
+      "description": "As a system, I need to validate that uploaded photos contain exactly one face.",
+      "acceptanceCriteria": [
+        "Install face-api.js or similar library",
+        "Create lib/face-detection.ts utility",
+        "Detect faces in uploaded image on client-side",
+        "Show error if no face detected",
+        "Show error if multiple faces detected",
+        "Only enable continue button when validation passes",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Create Stripe checkout session",
+      "description": "As a system, I need to create Stripe checkout sessions for payments.",
+      "acceptanceCriteria": [
+        "Create server function createCheckout in lib/server/stripe.ts",
+        "Accept styleId, uploadPath, and email as parameters",
+        "Create order record with status 'pending'",
+        "Create Stripe Checkout session with correct price",
+        "Set success_url to /order/{orderId}/status",
+        "Set cancel_url to /upload?style={styleId}",
+        "Return checkout session URL",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Integrate checkout on upload page",
+      "description": "As a user, I want to proceed to payment after uploading my photo.",
+      "acceptanceCriteria": [
+        "Add email input field on upload page",
+        "Validate email format before checkout",
+        "Continue button calls createCheckout server function",
+        "Redirect to Stripe Checkout URL on success",
+        "Show loading state during checkout creation",
+        "Handle errors with user-friendly messages",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Handle Stripe webhook",
+      "description": "As a system, I need to process Stripe webhook events to update order status.",
+      "acceptanceCriteria": [
+        "Create API route routes/api/stripe-webhook.ts",
+        "Verify webhook signature with Stripe secret",
+        "Handle checkout.session.completed event",
+        "Update order status from 'pending' to 'paid'",
+        "Trigger generation job (placeholder for now)",
+        "Return 200 OK on success",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Create order status page",
+      "description": "As a user, I want to see my order status so that I know when my portrait is ready.",
+      "acceptanceCriteria": [
+        "Create routes/order/$orderId/status.tsx page",
+        "Fetch order by ID from database",
+        "Show 404 if order not found",
+        "Display current status with visual indicator",
+        "Show progress steps: Payment → Generating → Complete",
+        "Auto-refresh status every 5 seconds while generating",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Create Modal AI generation function",
+      "description": "As a system, I need to generate portraits using Modal serverless GPU.",
+      "acceptanceCriteria": [
+        "Create lib/server/modal.ts with generation function",
+        "Accept uploadPath and promptTemplate as parameters",
+        "Call Modal API with Stable Diffusion/FLUX model",
+        "Generate 1024x1024 PNG output",
+        "Upload generated image to R2",
+        "Return output path on success",
+        "Handle errors and timeouts (5 min max)",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Implement generation job queue",
+      "description": "As a system, I need to queue and process generation jobs asynchronously.",
+      "acceptanceCriteria": [
+        "Create lib/server/queue.ts with job processing",
+        "Queue job when order status changes to 'paid'",
+        "Update order status to 'generating' when job starts",
+        "Call Modal generation function",
+        "Update order status to 'complete' with outputPath on success",
+        "Update order status to 'failed' on error",
+        "Typecheck passes"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Send delivery email with Resend",
+      "description": "As a user, I want to receive my portrait via email when generation is complete.",
+      "acceptanceCriteria": [
+        "Create lib/server/email.ts with sendDeliveryEmail function",
+        "Use Resend API to send email",
+        "Email contains order details and style name",
+        "Email contains secure download link (signed R2 URL)",
+        "Download link expires after 7 days",
+        "Trigger email send when order status changes to 'complete'",
+        "Typecheck passes"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Display download link on status page",
+      "description": "As a user, I want to download my portrait directly from the status page.",
+      "acceptanceCriteria": [
+        "Show download button when order status is 'complete'",
+        "Generate signed R2 URL for download",
+        "Download button opens image in new tab or triggers download",
+        "Show expiration notice (7 days)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Implement regeneration feature",
+      "description": "As a user, I want to regenerate my portrait once if unsatisfied.",
+      "acceptanceCriteria": [
+        "Show 'Regenerate' button on status page when complete and not used",
+        "Button disabled if regenerationUsed is true",
+        "Clicking button re-queues generation job",
+        "Update regenerationUsed to true in database",
+        "Update status back to 'generating'",
+        "Send new email with updated download link",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Create admin authentication",
+      "description": "As an admin, I need to authenticate to access the admin dashboard.",
+      "acceptanceCriteria": [
+        "Create routes/admin/login.tsx page",
+        "Simple password-based auth (env var ADMIN_PASSWORD)",
+        "Store auth in HTTP-only cookie",
+        "Create middleware to protect /admin/* routes",
+        "Redirect to login if not authenticated",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Create admin orders list",
+      "description": "As an admin, I want to view all orders so that I can monitor the system.",
+      "acceptanceCriteria": [
+        "Create routes/admin/orders.tsx page",
+        "List all orders with: ID, email, style, status, created date",
+        "Add status filter dropdown (All, Pending, Paid, Generating, Complete, Failed)",
+        "Show total count and success rate percentage",
+        "Order by created date descending",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Implement admin retry function",
+      "description": "As an admin, I want to retry failed generations.",
+      "acceptanceCriteria": [
+        "Show 'Retry' button for orders with status 'failed'",
+        "Create server function retryGeneration in lib/server/admin.ts",
+        "Re-queue generation job",
+        "Update status to 'generating'",
+        "Log retry attempt with timestamp",
+        "Refresh orders list after action",
+        "Typecheck passes"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Implement admin refund function",
+      "description": "As an admin, I want to trigger manual refunds via Stripe.",
+      "acceptanceCriteria": [
+        "Show 'Refund' button for orders with status 'paid' or 'failed'",
+        "Create server function refundOrder in lib/server/admin.ts",
+        "Call Stripe Refund API with payment intent",
+        "Update order status to 'refunded'",
+        "Log refund action with timestamp and reason",
+        "Refresh orders list after action",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Implement photo cleanup job",
+      "description": "As a system, I need to delete uploaded photos after 7 days for privacy.",
+      "acceptanceCriteria": [
+        "Create lib/server/cleanup.ts with cleanup function",
+        "Query orders with uploads older than 7 days",
+        "Delete original upload files from R2",
+        "Clear uploadPath in database",
+        "Log deletion count",
+        "Create API route /api/cron/cleanup for scheduled invocation",
+        "Typecheck passes"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
