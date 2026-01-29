@@ -488,3 +488,24 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Server functions use OrderStatus enum for type-safe status updates
 - adminRefundOrder uses Stripe Refund API with 'requested_by_customer' reason
 - Retry and refund actions refresh the orders list via useEffect on statusFilter change
+
+---
+
+## Thu Jan 30 21:55:00 +08 2026 - US-021
+- Created cleanup function in lib/server/cleanup.ts (already existed)
+- Created API route at routes/api/cron/cleanup.ts for scheduled invocation
+- Cleanup function queries orders with uploads older than 7 days
+- Deletes original upload files from R2 and clears uploadPath in database
+- Logs deletion count and any errors
+- GET endpoint returns JSON with success status, deletedCount, and errors
+- Typecheck passes, Biome lint passes
+
+**Files changed:**
+- muse-frame/src/routes/api/cron/cleanup.ts (new)
+- scripts/ralph/prd.json (modified - US-021 passes: true)
+
+**Learnings for future iterations:**
+- API routes in this codebase use plain GET/POST functions, not createFileRoute
+- Route files in api/ directory with - prefix are excluded from route tree
+- Cleanup job can be triggered via cron scheduler or manually via curl
+- S3 DeleteObjectCommand is used for R2 file deletion

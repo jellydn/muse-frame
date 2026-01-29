@@ -1,8 +1,9 @@
-shellEmulator: true
-
-trustPolicy: no-downgrade
-
 onlyBuiltDependencies:
+  - '@biomejs/biome'
   - '@parcel/watcher'
   - better-sqlite3
   - esbuild
+
+shellEmulator: true
+
+trustPolicy: no-downgrade
