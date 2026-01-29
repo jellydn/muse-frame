@@ -7,8 +7,8 @@
 
 body {
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-    "Helvetica Neue", sans-serif;
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+    sans-serif;
   line-height: 1.6;
   color: #1a1a2e;
   background-color: #fafafa;
@@ -235,5 +235,269 @@ a {
 
   .style-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Upload Page */
+.upload-page {
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+.upload-header {
+  padding: 24px 20px;
+  margin-bottom: 40px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-weight: 500;
+  color: #1a1a2e;
+  transition: opacity 0.2s ease;
+}
+
+.back-link:hover {
+  opacity: 0.7;
+}
+
+.upload-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.upload-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+}
+
+/* Style Info Card */
+.style-info-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.style-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.style-category-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.style-category-badge.girls {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.style-category-badge.boys {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.style-category-badge.unisex {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.style-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.style-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.style-description {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Upload Section */
+.upload-section {
+  margin-bottom: 24px;
+}
+
+/* Upload Zone */
+.upload-zone {
+  background: white;
+  border: 2px dashed #d0d0d0;
+  border-radius: 12px;
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+}
+
+.upload-zone:hover {
+  border-color: #667eea;
+  background-color: #f8f9ff;
+}
+
+.upload-zone.drag-over {
+  border-color: #667eea;
+  background-color: #eef1ff;
+  transform: scale(1.02);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.upload-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.upload-subtext {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.file-input {
+  display: none;
+}
+
+/* Preview Container */
+.preview-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.remove-button {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  color: #dc3545;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-button:hover {
+  background-color: #fff5f5;
+  border-color: #dc3545;
+}
+
+/* Requirements Card */
+.requirements-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.requirements-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 16px;
+}
+
+.requirements-list {
+  list-style: none;
+}
+
+.requirement-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.requirement-icon {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+/* Upload Actions */
+.upload-actions {
+  padding-top: 16px;
+}
+
+.continue-button {
+  width: 100%;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continue-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.continue-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile responsive for upload page */
+@media (max-width: 768px) {
+  .upload-title {
+    font-size: 1.5rem;
+  }
+
+  .upload-zone {
+    padding: 40px 20px;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+
+  .style-info-card,
+  .requirements-card {
+    padding: 20px;
+  }
+
+  .style-name {
+    font-size: 1.25rem;
   }
 }

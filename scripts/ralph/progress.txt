@@ -98,3 +98,30 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Create placeholder gradient backgrounds using category colors (pink for girls, blue for boys, green for unisex) as image fallback
 - Use media queries for responsive grid layout (minmax 300px, 1fr)
 ---
+
+## Thu Jan 30 00:25:00 +08 2026 - US-005
+- Implemented full upload page UI with drag-and-drop zone
+- Added style info card showing selected style, category badge, and price
+- Implemented file validation: JPEG/PNG only, max 10MB
+- Added image preview using FileReader API
+- Show photo requirements checklist
+- Continue button disabled until file is uploaded
+- Navigate to /checkout with style and image params on continue
+- Added responsive CSS styles for mobile
+- Typecheck passes
+
+**Files changed:**
+- muse-frame/src/routes/upload.tsx (modified - full upload page implementation)
+- muse-frame/src/styles/global.css (modified - added upload page styles)
+- muse-frame/scripts/ralph/prd.json (modified - US-005 passes: true)
+
+**Learnings for future iterations:**
+- Drag-and-drop requires both onDragOver (with preventDefault) and onDrop handlers
+- FileReader API creates data URLs for client-side image previews
+- useRef is needed for file input to support click-to-browse functionality
+- Category-based styling (pink/blue/green) creates visual consistency with landing page
+- Use category color mapping for visual consistency across pages (girls: pink, boys: blue, unisex: green)
+- File validation on client side improves UX before upload
+- Continue button disabled state provides clear feedback about missing requirements
+- React useCallback with empty deps array for event handlers prevents unnecessary re-renders
+---
