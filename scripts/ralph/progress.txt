@@ -293,3 +293,27 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - getDb() singleton pattern ensures single database connection across requests
 - Vite module runner caches modules aggressively - clear .vite cache when making structural changes
 - 404 errors for missing static assets (images) are expected and don't indicate JavaScript errors
+
+## Thu Jan 30 06:15:00 +08 2026 - US-012
+- Created lib/server/modal.ts with generatePortrait server function
+- Accepts uploadPath and promptTemplate as parameters
+- Fetches uploaded image from R2, converts to base64
+- Calls Modal API with prompt and reference image
+- Generates 1024x1024 PNG output
+- Uploads generated image to R2 (generated/outputs/uuid.png)
+- Handles errors with specific timeout detection (5 min max)
+- Returns outputPath on success, error message on failure
+- Typecheck passes
+- Biome lint passes
+
+**Files changed:**
+- muse-frame/src/lib/server/modal.ts (new)
+
+**Learnings for future iterations:**
+- Modal API requires authentication via Bearer token (MODAL_TOKEN_ID:MODAL_TOKEN_SECRET format)
+- AbortSignal.timeout() provides built-in timeout handling for fetch requests
+- AWS SDK GetObjectCommand returns a streaming body - convert to buffer using stream-to-buffer pattern
+- Modal can return generated image as base64 or URL depending on model implementation
+- Generate unique output filenames with UUID to avoid collisions
+- Separate output directory (generated/outputs/) from input uploads (uploads/) for organization
+- env.MODAL_TOKEN_ID and env.MODAL_TOKEN_SECRET must be set for Modal API calls
