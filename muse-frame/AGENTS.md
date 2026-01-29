@@ -14,32 +14,31 @@ Muse Frame is an MVP web application for AI-generated personalized portraits. Us
 
 ## Commands
 
-All commands run from `muse-frame/` directory using `just`:
+All commands run from `muse-frame/` directory using `pnpm`:
 
 ```bash
 # Development
-just dev           # Start dev server (port 3000)
+pnpm dev           # Start dev server (port 3000)
 
 # Build & Preview
-just build         # Production build
-just start         # Preview production build
+pnpm build         # Production build
+pnpm start         # Preview production build
 
 # Quality Checks
-just typecheck     # TypeScript type checking (REQUIRED)
-just lint          # Biome linter
-just format        # Apply Biome formatting
-just format_check  # Check formatting without applying
-just check         # Run typecheck + lint + build
+pnpm typecheck     # TypeScript type checking (REQUIRED)
+pnpm lint          # Biome linter
+pnpm format        # Apply Biome formatting
+pnpm format_check  # Check formatting without applying
+pnpm check         # Run typecheck + lint + build
 
 # Database
-just db_generate   # Generate Drizzle migrations
-just db_migrate    # Apply Drizzle migrations
-just db_studio     # Open Drizzle Studio
+pnpm db:generate   # Generate Drizzle migrations
+pnpm db:migrate    # Apply Drizzle migrations
+pnpm db:studio     # Open Drizzle Studio
 
 # Testing (Vitest)
-just test          # Run all tests
-just test run src/test/file.test.ts  # Run single test file
-just test:watch    # Watch mode
+pnpm test          # Run all tests
+pnpm test:watch    # Watch mode
 ```
 
 **Package Manager Commands**:
@@ -62,8 +61,8 @@ pnpm add <package> # Add dependency
 
 **Fix issues automatically**:
 ```bash
-just format        # Apply formatting
-just lint          # Biome check (use --apply to fix)
+pnpm format        # Apply formatting
+pnpm lint          # Biome check (use --apply to fix)
 ```
 
 ### TypeScript
@@ -169,7 +168,7 @@ export const orders = sqliteTable('orders', {
 
 **Add API route**: Create server functions in `~/lib/server/`, marked with `'use server'`
 
-**Schema changes**: `just db_generate && just db_migrate`
+**Schema changes**: `pnpm db:generate && pnpm db:migrate`
 
 **Add new table**:
 1. Define schema in `~/db/schema.ts`
@@ -177,6 +176,6 @@ export const orders = sqliteTable('orders', {
 
 ## Notes
 
-- Run `just check` before committing
+- Run `pnpm check` before committing
 - All acceptance criteria must include `Typecheck passes`
 - Never commit `.env` files or secrets

@@ -40,7 +40,7 @@ export function createMockOrder(overrides: Partial<MockOrder> = {}): MockOrder {
   return order
 }
 
-export function createMockDb() {
+export function createMockDb(): any {
   return {
     select: () => ({
       from: () => ({
@@ -112,7 +112,7 @@ export async function withMockedModule(
   testFn: () => void | Promise<void>,
 ) {
   for (const [path, mock] of Object.entries(mocks)) {
-    vi.doMock(path, () => mock)
+    vi.doMock(path, () => mock as any)
   }
 
   try {

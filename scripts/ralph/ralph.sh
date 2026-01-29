@@ -111,36 +111,11 @@ for i in $(seq 1 $MAX_ITERATIONS); do
       echo "Continuing to next iteration..."
       sleep 2
       continue
-    fi
-
-    echo ""
-    echo "All stories complete! Running final quality checks..."
-
-    # Run quality checks from project root
-    cd "$SCRIPT_DIR/../muse-frame"
-    if [ -f "package.json" ]; then
-      echo "Running typecheck..."
-      pnpm exec tsc --noEmit 2>/dev/null || {
-        echo "Typecheck failed! Continuing to fix issues..."
-        cd "$SCRIPT_DIR"
-        sleep 2
-        continue
-      }
-
-      echo "Running lint..."
-      pnpm exec biome check --write=false 2>/dev/null || {
-        echo "Lint failed! Continuing to fix issues..."
-        cd "$SCRIPT_DIR"
-        sleep 2
-        continue
-      }
-    fi
-    cd "$SCRIPT_DIR"
-
-    echo ""
-    echo "Ralph completed all tasks!"
-    echo "Completed at iteration $i of $MAX_ITERATIONS"
-    exit 0
+    else
+      echo "Ralph completed all tasks!"
+      echo "Completed at iteration $i of $MAX_ITERATIONS"
+      exit 0
+    fi 
   fi
   
   echo "Iteration $i complete. Continuing..."

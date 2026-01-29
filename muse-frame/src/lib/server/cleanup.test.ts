@@ -2,7 +2,7 @@ import { lt } from 'drizzle-orm'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getDb } from '~/db'
 import { orders } from '~/db/schema'
-import { type MockOrder, createMockDb, createMockOrder, resetMockDb } from '~/test/utils'
+import { createMockDb, createMockOrder, type MockOrder, resetMockDb } from '~/test/utils'
 
 vi.mock('~/db', () => ({
   getDb: vi.fn(),

@@ -1,3 +1,4 @@
 muse-frame/node_modules
 muse-frame/dist/
 .env
+muse-frame/.tanstack

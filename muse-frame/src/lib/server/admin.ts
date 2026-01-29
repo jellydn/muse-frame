@@ -93,10 +93,11 @@ export async function adminRetryGeneration(
 
   getDb()
     .update(orders)
-    .set({ status: OrderStatus.Paid, regenerationUsed: false, updatedAt: new Date() })
+    .set({ status: OrderStatus.Paid, updatedAt: new Date() })
     .where(eq(orders.id, orderId))
+    .run()
 
-  retryGeneration(orderId)
+  await retryGeneration(orderId)
 
   return { success: true }
 }
@@ -131,6 +132,7 @@ export async function adminRefundOrder(
       updatedAt: new Date(),
     })
     .where(eq(orders.id, orderId))
+    .run()
 
   if (reason) console.log(`Order ${orderId} refunded. Reason: ${reason}`)
   return { success: true }
