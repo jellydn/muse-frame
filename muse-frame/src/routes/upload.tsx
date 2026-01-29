@@ -1,6 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useCallback, useRef, useState } from 'react'
 import { detectFaces, getFaceValidationMessage } from '~/lib/face-detection'
+import { createCheckout } from '~/lib/server/stripe'
+import { uploadPhoto } from '~/lib/server/upload'
 import { getStyleById } from '~/lib/styles'
 
 export const Route = createFileRoute('/upload')({
@@ -27,7 +29,17 @@ function UploadPage() {
     'idle' | 'validating' | 'valid' | 'invalid'
   >('idle')
   const [faceError, setFaceError] = useState<string | null>(null)
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Email validation regex - wrapped in useCallback to satisfy linter
+  const isValidEmail = useCallback((email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }, [])
 
   const handleFileSelect = useCallback(async (file: File | null) => {
     if (!file) return
@@ -118,10 +130,68 @@ function UploadPage() {
     }
   }, [])
 
-  const handleContinue = () => {
-    // Navigate to checkout - for now, just log and redirect with query params
-    window.location.href = `/checkout?style=${styleId}&hasImage=true`
-  }
+  const handleContinue = useCallback(async () => {
+    // Reset error states
+    setEmailError(null)
+    setErrorMessage(null)
+
+    // Validate email
+    if (!email.trim()) {
+      setEmailError('Please enter your email address.')
+      return
+    }
+
+    if (!isValidEmail(email)) {
+      setEmailError('Please enter a valid email address.')
+      return
+    }
+
+    // Validate file and face detection
+    if (!uploadedFile || faceValidationStatus !== 'valid') {
+      setErrorMessage('Please upload and validate a photo first.')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      // Step 1: Upload photo to server
+      const uploadResult = await uploadPhoto(uploadedFile, styleId)
+
+      if (!uploadResult.success) {
+        setErrorMessage(uploadResult.error || 'Failed to upload photo. Please try again.')
+        setIsLoading(false)
+        return
+      }
+
+      if (!uploadResult.uploadPath) {
+        setErrorMessage('Failed to get upload path. Please try again.')
+        setIsLoading(false)
+        return
+      }
+
+      // Step 2: Create checkout session
+      const checkoutResult = await createCheckout(styleId, uploadResult.uploadPath, email)
+
+      if (!checkoutResult.success) {
+        setErrorMessage(checkoutResult.error || 'Failed to create checkout. Please try again.')
+        setIsLoading(false)
+        return
+      }
+
+      // Step 3: Redirect to Stripe Checkout
+      if (checkoutResult.checkoutUrl) {
+        window.location.href = checkoutResult.checkoutUrl
+      } else {
+        setErrorMessage('Failed to get checkout URL. Please try again.')
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      setErrorMessage('An unexpected error occurred. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [email, uploadedFile, faceValidationStatus, styleId, isValidEmail])
 
   // Get category color for styling
   const categoryColors: Record<string, string> = {
@@ -157,6 +227,30 @@ function UploadPage() {
             <p className="style-description">{style.description}</p>
           </div>
 
+          {/* Email Input */}
+          <div className="email-section">
+            <div className="email-input-card">
+              <label htmlFor="email" className="email-label">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                className="email-input"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  setEmailError(null)
+                }}
+                disabled={isLoading}
+                required
+              />
+              <p className="email-hint">We'll send your portrait download link to this email</p>
+              {emailError && <p className="email-error">{emailError}</p>}
+            </div>
+          </div>
+
           {/* Upload Zone */}
           <div className="upload-section">
             {!previewUrl ? (
@@ -164,6 +258,10 @@ function UploadPage() {
                 type="button"
                 className={`upload-zone ${isDragOver ? 'drag-over' : ''}`}
                 onClick={() => fileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                disabled={isLoading}
               >
                 <div className="upload-icon">📷</div>
                 <p className="upload-text">Drag and drop your photo here</p>
@@ -179,7 +277,12 @@ function UploadPage() {
             ) : (
               <div className="preview-container">
                 <img src={previewUrl} alt="Uploaded preview" className="preview-image" />
-                <button type="button" className="remove-button" onClick={handleRemoveFile}>
+                <button
+                  type="button"
+                  className="remove-button"
+                  onClick={handleRemoveFile}
+                  disabled={isLoading}
+                >
                   Remove Photo
                 </button>
                 {/* Face Validation Status */}
@@ -225,19 +328,32 @@ function UploadPage() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="error-message-card">
+              <p className="error-message">{errorMessage}</p>
+            </div>
+          )}
+
           {/* Continue Button */}
           <div className="upload-actions">
             <button
               type="button"
               className="continue-button"
               onClick={handleContinue}
-              disabled={!uploadedFile || faceValidationStatus !== 'valid'}
+              disabled={!uploadedFile || faceValidationStatus !== 'valid' || !email || isLoading}
             >
-              {faceValidationStatus === 'validating'
-                ? 'Validating...'
-                : faceValidationStatus === 'invalid'
-                  ? faceError || 'Invalid image'
-                  : 'Continue to Payment'}
+              {isLoading ? (
+                <>
+                  <span className="spinner" /> Processing...
+                </>
+              ) : faceValidationStatus === 'validating' ? (
+                'Validating...'
+              ) : faceValidationStatus === 'invalid' ? (
+                faceError || 'Invalid image'
+              ) : (
+                'Continue to Payment'
+              )}
             </button>
           </div>
         </div>

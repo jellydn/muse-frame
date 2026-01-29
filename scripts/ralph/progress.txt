@@ -209,3 +209,28 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Use session.url for the checkout redirect URL (may be undefined for some payment methods)
 - Drizzle's .returning() method returns arrays even for single-row inserts
 ---
+
+## Thu Jan 30 01:25:00 +08 2026 - US-009
+- Added email input field to upload page with validation
+- Email validation uses regex pattern for format checking
+- Added loading state with spinner during checkout process
+- Implemented error messages for email errors, upload errors, and checkout errors
+- Photo upload and checkout flow integrated into single Continue button action
+- Continue button disabled until email is valid and face validation passes
+- Typecheck passes
+- Biome lint passes
+
+**Files changed:**
+- muse-frame/src/routes/upload.tsx (modified - added email input, validation, and checkout flow)
+- muse-frame/src/styles/global.css (modified - added email input and error message styles)
+- muse-frame/scripts/ralph/prd.json (modified - US-009 passes: true)
+
+**Learnings for future iterations:**
+- useCallback dependencies must include all referenced functions (isValidEmail wrapped in useCallback)
+- Non-null assertions (!.) should be avoided - use proper null checks instead
+- Biome formatter requires single-line JSX expressions for conditional rendering
+- Import order: external libs → path aliases (~/...) → relative imports
+- State for email validation errors should be cleared when user starts typing again
+- Loading state disables form inputs to prevent double submissions
+- Error messages should be prominent and use distinct styling (red background)
+---
