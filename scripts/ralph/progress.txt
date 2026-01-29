@@ -125,3 +125,29 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Continue button disabled state provides clear feedback about missing requirements
 - React useCallback with empty deps array for event handlers prevents unnecessary re-renders
 ---
+
+## Thu Jan 30 00:40:00 +08 2026 - US-006
+- Created lib/server/upload.ts with uploadPhoto server function
+- Validates file type (JPEG/PNG only) with ALLOWED_MIME_TYPES constant
+- Validates file size (max 10MB) with MAX_FILE_SIZE constant
+- Generates unique filenames using UUID v4 with styleId prefix for organization
+- Uploads to Cloudflare R2 using @aws-sdk/client-s3 S3Client
+- Returns UploadPhotoResult with success, uploadPath or error message
+- Added uuid package for unique filename generation
+- Typecheck passes
+- Biome lint passes
+
+**Files changed:**
+- muse-frame/src/lib/server/upload.ts (new)
+- muse-frame/package.json (modified - added uuid, @types/uuid)
+- muse-frame/pnpm-lock.yaml (modified)
+- muse-frame/scripts/ralph/prd.json (modified - US-006 passes: true)
+
+**Learnings for future iterations:**
+- Use 'use server' directive at top of server function files in TanStack Start
+- AWS SDK S3Client with region 'auto' works with Cloudflare R2 endpoint format
+- File.arrayBuffer() returns ArrayBuffer - convert to Uint8Array for S3 PutObjectCommand
+- Export constants (MAX_FILE_SIZE, ALLOWED_MIME_TYPES) for reuse in client-side validation
+- UUID v4 with styleId prefix creates organized, unique filenames (e.g., princess/uuid.png)
+- env configuration in lib/env.ts provides centralized access to R2 credentials
+---
