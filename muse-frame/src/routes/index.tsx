@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { getStylesByCategory, type PortraitStyle, type StyleCategory } from "~/lib/styles";
+import { createFileRoute } from '@tanstack/react-router'
+import type { PortraitStyle, StyleCategory } from '~/lib/styles'
+import { getStylesByCategory } from '~/lib/styles'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: IndexPage,
-});
+})
 
 function IndexPage() {
   return (
@@ -28,7 +29,7 @@ function IndexPage() {
           <div className="category-section">
             <h3 className="category-title girls">For Girls</h3>
             <div className="style-grid">
-              {getStylesByCategory("girls").map((style) => (
+              {getStylesByCategory('girls').map((style) => (
                 <StyleCard key={style.id} style={style} />
               ))}
             </div>
@@ -38,7 +39,7 @@ function IndexPage() {
           <div className="category-section">
             <h3 className="category-title boys">For Boys</h3>
             <div className="style-grid">
-              {getStylesByCategory("boys").map((style) => (
+              {getStylesByCategory('boys').map((style) => (
                 <StyleCard key={style.id} style={style} />
               ))}
             </div>
@@ -48,7 +49,7 @@ function IndexPage() {
           <div className="category-section">
             <h3 className="category-title unisex">Unisex</h3>
             <div className="style-grid">
-              {getStylesByCategory("unisex").map((style) => (
+              {getStylesByCategory('unisex').map((style) => (
                 <StyleCard key={style.id} style={style} />
               ))}
             </div>
@@ -94,29 +95,29 @@ function IndexPage() {
         </div>
       </footer>
     </div>
-  );
+  )
 }
 
 function StyleCard({ style }: { style: PortraitStyle }) {
   const handleClick = () => {
     // Use window.location for navigation with search params
-    window.location.href = `/upload?style=${encodeURIComponent(style.id)}`;
-  };
+    window.location.href = `/upload?style=${encodeURIComponent(style.id)}`
+  }
 
   const formatPrice = (cents: number): string => {
-    return `$${(cents / 100).toFixed(0)}`;
-  };
+    return `$${(cents / 100).toFixed(0)}`
+  }
 
   // Use a placeholder gradient background if image doesn't exist
   const imageStyle: React.CSSProperties = {
-    width: "100%",
-    height: "200px",
-    objectFit: "cover",
+    width: '100%',
+    height: '200px',
+    objectFit: 'cover',
     background: getCategoryGradient(style.category),
-  };
+  }
 
   return (
-    <div className="style-card" onClick={handleClick} role="button" tabIndex={0}>
+    <button type="button" className="style-card" onClick={handleClick}>
       <img
         src={style.previewImage}
         alt={`${style.name} style preview`}
@@ -124,11 +125,11 @@ function StyleCard({ style }: { style: PortraitStyle }) {
         style={imageStyle}
         onError={(e) => {
           // Fallback to gradient on error
-          const target = e.target as HTMLImageElement;
-          target.style.display = "none";
-          const parent = target.parentElement;
+          const target = e.target as HTMLImageElement
+          target.style.display = 'none'
+          const parent = target.parentElement
           if (parent) {
-            parent.style.background = getCategoryGradient(style.category);
+            parent.style.background = getCategoryGradient(style.category)
           }
         }}
       />
@@ -140,19 +141,19 @@ function StyleCard({ style }: { style: PortraitStyle }) {
           <span className="style-card-cta">Select Style</span>
         </div>
       </div>
-    </div>
-  );
+    </button>
+  )
 }
 
 function getCategoryGradient(category: StyleCategory): string {
   switch (category) {
-    case "girls":
-      return "linear-gradient(135deg, #f8bbd9 0%, #f48fb1 100%)";
-    case "boys":
-      return "linear-gradient(135deg, #bbdefb 0%, #64b5f6 100%)";
-    case "unisex":
-      return "linear-gradient(135deg, #c8e6c9 0%, #81c784 100%)";
+    case 'girls':
+      return 'linear-gradient(135deg, #f8bbd9 0%, #f48fb1 100%)'
+    case 'boys':
+      return 'linear-gradient(135deg, #bbdefb 0%, #64b5f6 100%)'
+    case 'unisex':
+      return 'linear-gradient(135deg, #c8e6c9 0%, #81c784 100%)'
     default:
-      return "linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%)";
+      return 'linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%)'
   }
 }

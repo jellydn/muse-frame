@@ -1,10 +1,10 @@
-import { defineConfig } from "@tanstack/start/config";
+import { defineConfig } from '@tanstack/start/config'
 
 export default defineConfig({
   app: {
-    name: "Muse Frame",
+    name: 'Muse Frame',
   },
   server: {
-    preset: "node-server",
+    preset: 'node-server',
   },
-});
+})

@@ -24,8 +24,8 @@ just start         # Preview production build
 
 # Quality Checks
 just typecheck     # TypeScript type checking (REQUIRED)
-just lint          # ESLint with @antfu/eslint-config
-just format        # Format with oxfmt
+just lint          # Biome linter
+just format        # Format with Biome
 just format_check  # Check formatting without applying
 just check         # Run typecheck + lint + build
 
@@ -57,8 +57,7 @@ vitest run filename.test.ts
 
 ### Linter & Formatter
 
-- **Linter**: ESLint with `@antfu/eslint-config`
-- **Formatter**: oxfmt (orthogonal formatter)
+- **Linter & Formatter**: Biome
 
 **Key rules**:
 - Single quotes only (`'string'`)
@@ -130,39 +129,6 @@ export const orders = sqliteTable('orders', {
 })
 ```
 
-## Development Workflow
-
-1. Read requirements in `tasks/prd-muse-frame.md`
-2. Implement feature with acceptance criteria
-3. Run `just check` before committing
-4. Commit: `feat: [Story ID] - [Story Title]`
-5. UI stories require browser verification
-
-## Ralph Autonomous Agent Workflow
-
-1. Read `scripts/ralph/prd.json` for stories with `passes: false`
-2. Pick highest priority incomplete story
-3. Implement the feature
-4. Run `just check` to verify
-5. Commit: `feat: [Story ID] - [Story Title]`
-6. Update PRD `passes` field to `true`
-7. Append progress to `scripts/ralph/progress.txt`
-
-## Environment Variables
-
-Create `.env` in `muse-frame/`:
-
-```env
-DATABASE_URL=file:./sqlite.db
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-RESEND_API_KEY=re_...
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-R2_BUCKET_NAME=...
-R2_ACCOUNT_ID=...
-```
-
 ## Common Tasks
 
 **Add route**: Create `src/routes/[path].tsx` with `createFileRoute` - auto-routes
@@ -175,3 +141,4 @@ R2_ACCOUNT_ID=...
 
 - All acceptance criteria must include `Typecheck passes`
 - UI stories require browser verification per PRD
+- Run `just check` before committing

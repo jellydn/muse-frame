@@ -11,13 +11,13 @@ typecheck:
     pnpm typecheck
 
 lint:
-    pnpm lint
+    pnpm biome check .
 
 format:
-    pnpm fmt
+    pnpm biome format --write .
 
 format_check:
-    pnpm fmt:check
+    pnpm biome format --check .
 
 db_generate:
     npx drizzle-kit generate

@@ -25,8 +25,7 @@ function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = useCallback((file: File | null) => {
-    if (!file)
-      return
+    if (!file) return
 
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png']
@@ -62,18 +61,24 @@ function UploadPage() {
     setIsDragOver(false)
   }, [])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsDragOver(false)
 
-    const file = e.dataTransfer.files[0]
-    handleFileSelect(file)
-  }, [handleFileSelect])
+      const file = e.dataTransfer.files[0]
+      handleFileSelect(file)
+    },
+    [handleFileSelect],
+  )
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
-    handleFileSelect(file)
-  }, [handleFileSelect])
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0] || null
+      handleFileSelect(file)
+    },
+    [handleFileSelect],
+  )
 
   const handleRemoveFile = useCallback(() => {
     setUploadedFile(null)
@@ -116,10 +121,7 @@ function UploadPage() {
               <span className={`style-category-badge ${style.category}`}>
                 {style.category.charAt(0).toUpperCase() + style.category.slice(1)}
               </span>
-              <span className="style-price">
-                $
-                {(style.price / 100).toFixed(2)}
-              </span>
+              <span className="style-price">${(style.price / 100).toFixed(2)}</span>
             </div>
             <h2 className="style-name">{style.name}</h2>
             <p className="style-description">{style.description}</p>
@@ -127,35 +129,31 @@ function UploadPage() {
 
           {/* Upload Zone */}
           <div className="upload-section">
-            {!previewUrl
-              ? (
-                  <div
-                    className={`upload-zone ${isDragOver ? 'drag-over' : ''}`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="upload-icon">📷</div>
-                    <p className="upload-text">Drag and drop your photo here</p>
-                    <p className="upload-subtext">or click to browse</p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/jpeg,image/png"
-                      onChange={handleInputChange}
-                      className="file-input"
-                    />
-                  </div>
-                )
-              : (
-                  <div className="preview-container">
-                    <img src={previewUrl} alt="Uploaded preview" className="preview-image" />
-                    <button className="remove-button" onClick={handleRemoveFile}>
-                      Remove Photo
-                    </button>
-                  </div>
-                )}
+            {!previewUrl ? (
+              <button
+                type="button"
+                className={`upload-zone ${isDragOver ? 'drag-over' : ''}`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="upload-icon">📷</div>
+                <p className="upload-text">Drag and drop your photo here</p>
+                <p className="upload-subtext">or click to browse</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  onChange={handleInputChange}
+                  className="file-input"
+                />
+              </button>
+            ) : (
+              <div className="preview-container">
+                <img src={previewUrl} alt="Uploaded preview" className="preview-image" />
+                <button type="button" className="remove-button" onClick={handleRemoveFile}>
+                  Remove Photo
+                </button>
+              </div>
+            )}
 
             {/* Photo Requirements */}
             <div className="requirements-card">
@@ -184,6 +182,7 @@ function UploadPage() {
           {/* Continue Button */}
           <div className="upload-actions">
             <button
+              type="button"
               className="continue-button"
               onClick={handleContinue}
               disabled={!uploadedFile}

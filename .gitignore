@@ -1,1 +1,3 @@
 muse-frame/node_modules
+muse-frame/dist/
+.env
