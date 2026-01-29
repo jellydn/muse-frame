@@ -469,3 +469,22 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Admin orders page already included retry and refund functionality when first created
 - Server-side 500 errors are typically due to missing environment variables, not implementation issues
 - Verify lint passes on individual files when making small changes
+
+---
+
+## Thu Jan 30 21:50:00 +08 2026 - US-019 & US-020
+- Verified adminRetryGeneration function exists in lib/server/admin.ts
+- Verified adminRefundOrder function exists in lib/server/admin.ts
+- Verified Retry button renders for failed orders in orders.tsx
+- Verified Refund button renders for paid/failed orders in orders.tsx
+- Both functions include proper status updates and logging
+- Updated PRD to mark US-019 and US-020 as complete
+
+**Files changed:**
+- scripts/ralph/prd.json (modified - US-019, US-020 passes: true)
+
+**Learnings for future iterations:**
+- Admin retry/refund functions were implemented alongside US-017 (admin auth)
+- Server functions use OrderStatus enum for type-safe status updates
+- adminRefundOrder uses Stripe Refund API with 'requested_by_customer' reason
+- Retry and refund actions refresh the orders list via useEffect on statusFilter change
