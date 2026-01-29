@@ -5,6 +5,7 @@ import Stripe from 'stripe'
 import { getDb } from '~/db'
 import { orders } from '~/db/schema'
 import { env } from '~/lib/env'
+import { generationQueue } from '~/lib/server/queue'
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2026-01-28.clover',
@@ -77,66 +78,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   console.log(`Order ${orderIdNum} marked as paid`)
 
-  // Trigger generation job (placeholder for US-013)
-  await triggerGenerationJob(orderIdNum)
-}
-
-async function triggerGenerationJob(orderId: number) {
-  // This is a placeholder for the generation job queue (US-013)
-  // For now, we just log that the job should be triggered
-  console.log(`Generation job should be triggered for order ${orderId}`)
-
-  // TODO: Implement job queue processing in US-013
-  // For now, simulate async generation
-  setTimeout(async () => {
-    try {
-      // Update status to 'generating'
-      await getDb()
-        .update(orders)
-        .set({
-          status: 'generating',
-          updatedAt: new Date(),
-        })
-        .where(eq(orders.id, orderId))
-
-      console.log(`Order ${orderId} status updated to 'generating'`)
-
-      // Simulate generation completion after 5 seconds (placeholder)
-      // In production, this would be handled by Modal serverless function
-      await simulateGeneration(orderId)
-    } catch (error) {
-      console.error(`Error triggering generation for order ${orderId}:`, error)
-    }
-  }, 1000)
-}
-
-async function simulateGeneration(orderId: number) {
-  // Placeholder for AI generation - simulates successful generation
-  // This will be replaced with actual Modal integration in US-012
-  try {
-    // Simulate some processing time
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-
-    // For demo purposes, we'll just log and update to 'complete'
-    // In production, this would call Modal API and upload result to R2
-    await getDb()
-      .update(orders)
-      .set({
-        status: 'complete',
-        outputPath: `generated/${orderId}/output.png`,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId))
-
-    console.log(`Order ${orderId} generation complete`)
-  } catch (error) {
-    console.error(`Generation failed for order ${orderId}:`, error)
-    await getDb()
-      .update(orders)
-      .set({
-        status: 'failed',
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId))
-  }
+  // Trigger generation job via the queue
+  generationQueue.enqueueGeneration(orderIdNum)
 }
