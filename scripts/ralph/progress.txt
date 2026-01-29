@@ -55,3 +55,21 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - better-sqlite3 provides synchronous SQLite access ideal for server-side use
 - OrderStatus enum should be exported for use across the application
 ---
+
+## Thu Jan 29 23:59:30 +08 2026 - US-003
+- Created lib/styles.ts with centralized style definitions
+- Defined PortraitStyle type with: id, name, description, category, price, previewImage, promptTemplate
+- Created helper functions: getStyleById() and getStylesByCategory()
+- Added 6 styles: Princess, Fantasy (girls), Superheroes, Fantasy (boys), National Culture, Pre-school Graduation
+- All styles priced at $10 (1000 cents) as per requirements
+- Typecheck passes
+
+**Files changed:**
+- muse-frame/src/lib/styles.ts (new)
+
+**Learnings for future iterations:**
+- Define centralized configuration files in lib/ for single source of truth
+- Export both the data (PORTRAIT_STYLES array) and helper functions for reuse
+- Use TypeScript type exports (StyleCategory) for type safety across the app
+- promptTemplate allows customization of AI generation prompts per style
+---
