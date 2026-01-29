@@ -103,7 +103,7 @@ export async function retryGeneration(
     .update(orders)
     .set({
       status: 'paid' as const,
-      regenerationUsed: order.status === 'complete' ? false : undefined,
+      regenerationUsed: true,
       updatedAt: new Date(),
     })
     .where(eq(orders.id, orderId))

@@ -398,3 +398,22 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Response.redirect() with 302 status performs the actual download redirect
 - Signed URLs are generated on-demand, not stored - prevents unauthorized access after expiration
 - Client-side target="_blank" with rel="noopener noreferrer" is security best practice
+---
+
+## Thu Jan 30 20:00:00 +08 2026 - US-016
+- Fixed retryGeneration function to set regenerationUsed: true when regeneration starts
+- Verified RegenerateButton component exists in status page with proper conditions
+- Regenerate button shown when order is complete and regeneration not used
+- Regenerate button shown when order is failed (retry attempt)
+- Clicking button re-queues generation job via retryGeneration -> enqueueGeneration
+- Email sent with new download link when regeneration completes
+- Typecheck passes, Biome lint passes, Build passes
+
+**Files changed:**
+- muse-frame/src/lib/server/queue.ts (modified - fixed regenerationUsed logic)
+
+**Learnings for future iterations:**
+- Regeneration eligibility should be checked in retryGeneration, not just in UI
+- Setting regenerationUsed: true at retry start prevents multiple regeneration attempts
+- Failed orders can retry, complete orders can regenerate once - both set regenerationUsed when queued
+- Email sending on completion works for both initial generation and regeneration
