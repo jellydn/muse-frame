@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useCallback, useRef, useState } from 'react'
+import { detectFaces, getFaceValidationMessage } from '~/lib/face-detection'
 import { getStyleById } from '~/lib/styles'
 
 export const Route = createFileRoute('/upload')({
@@ -22,10 +23,18 @@ function UploadPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [faceValidationStatus, setFaceValidationStatus] = useState<
+    'idle' | 'validating' | 'valid' | 'invalid'
+  >('idle')
+  const [faceError, setFaceError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleFileSelect = useCallback((file: File | null) => {
+  const handleFileSelect = useCallback(async (file: File | null) => {
     if (!file) return
+
+    // Reset validation state
+    setFaceValidationStatus('idle')
+    setFaceError(null)
 
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png']
@@ -46,7 +55,26 @@ function UploadPage() {
     // Create preview
     const reader = new FileReader()
     reader.onload = (e) => {
-      setPreviewUrl(e.target?.result as string)
+      const result = e.target?.result as string
+      setPreviewUrl(result)
+
+      // Run face detection on the image
+      setFaceValidationStatus('validating')
+      detectFaces(result)
+        .then((result) => {
+          if (result.success && result.faceCount === 1) {
+            setFaceValidationStatus('valid')
+          } else {
+            const message = result.error || getFaceValidationMessage(result.faceCount)
+            setFaceError(message)
+            setFaceValidationStatus('invalid')
+          }
+        })
+        .catch((error) => {
+          console.error('Face detection failed:', error)
+          setFaceError('Failed to validate image. Please try again.')
+          setFaceValidationStatus('invalid')
+        })
     }
     reader.readAsDataURL(file)
   }, [])
@@ -83,6 +111,8 @@ function UploadPage() {
   const handleRemoveFile = useCallback(() => {
     setUploadedFile(null)
     setPreviewUrl(null)
+    setFaceValidationStatus('idle')
+    setFaceError(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -152,6 +182,22 @@ function UploadPage() {
                 <button type="button" className="remove-button" onClick={handleRemoveFile}>
                   Remove Photo
                 </button>
+                {/* Face Validation Status */}
+                {faceValidationStatus === 'validating' && (
+                  <div className="validation-status validating">
+                    <span className="spinner" /> Validating photo...
+                  </div>
+                )}
+                {faceValidationStatus === 'valid' && (
+                  <div className="validation-status valid">
+                    <span className="check-icon">✓</span> Photo validated - single face detected
+                  </div>
+                )}
+                {faceValidationStatus === 'invalid' && faceError && (
+                  <div className="validation-status error">
+                    <span className="error-icon">✕</span> {faceError}
+                  </div>
+                )}
               </div>
             )}
 
@@ -185,9 +231,13 @@ function UploadPage() {
               type="button"
               className="continue-button"
               onClick={handleContinue}
-              disabled={!uploadedFile}
+              disabled={!uploadedFile || faceValidationStatus !== 'valid'}
             >
-              Continue to Payment
+              {faceValidationStatus === 'validating'
+                ? 'Validating...'
+                : faceValidationStatus === 'invalid'
+                  ? faceError || 'Invalid image'
+                  : 'Continue to Payment'}
             </button>
           </div>
         </div>
