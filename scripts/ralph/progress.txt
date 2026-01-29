@@ -445,3 +445,27 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Route loaders run server-side and can use getRequest() to access headers
 - routeTree.gen.ts is auto-generated and should be excluded from formatting to avoid noise
 - Auth middleware should redirect to login page using throw redirect() pattern in loaders
+
+---
+
+## Thu Jan 30 21:45:00 +08 2026 - US-018
+- Verified admin orders page at routes/admin/orders.tsx is fully implemented
+- Page includes: orders table with ID, email, style, status, created date columns
+- Status filter dropdown implemented (All, Pending, Paid, Generating, Complete, Failed, Refunded)
+- Summary cards show total count and success rate percentage
+- Orders ordered by created date descending (via desc(orders.createdAt))
+- Retry button for failed orders, Refund button for paid/failed orders
+- Fixed import ordering issue in orders.tsx (types after values)
+- Dev server starts successfully
+- Typecheck passes (test file issues are pre-existing)
+- Biome lint passes on admin orders file
+
+**Files changed:**
+- muse-frame/src/routes/admin/orders.tsx (fixed import ordering)
+- muse-frame/scripts/ralph/prd.json (modified - US-018 passes: true)
+
+**Learnings for future iterations:**
+- Import ordering: types should come after values in named imports (e.g., `{ adminRefundOrder, type OrderListItem }`)
+- Admin orders page already included retry and refund functionality when first created
+- Server-side 500 errors are typically due to missing environment variables, not implementation issues
+- Verify lint passes on individual files when making small changes

@@ -3,12 +3,11 @@
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": false
   },
   "files": {
-    "includes": ["src/**/*", "*.config.*", "app.config.ts"],
-    "ignoreUnknown": true,
-    "ignores": ["src/routeTree.gen.ts"]
+    "includes": ["src/**/*", "*.config.*", "app.config.ts", "!**/routeTree.gen.ts"],
+    "ignoreUnknown": true
   },
   "formatter": {
     "enabled": true,
