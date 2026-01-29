@@ -417,3 +417,31 @@ Started: Thu Jan 29 23:40:51 +08 2026
 - Setting regenerationUsed: true at retry start prevents multiple regeneration attempts
 - Failed orders can retry, complete orders can regenerate once - both set regenerationUsed when queued
 - Email sending on completion works for both initial generation and regeneration
+---
+
+## Thu Jan 30 21:30:00 +08 2026 - US-017
+- Created admin login page at routes/admin/login.tsx with password form
+- Created login API at routes/api/admin/-login.ts with ADMIN_SECRET validation
+- Created logout API at routes/api/admin/-logout.ts to clear session cookie
+- Implemented HTTP-only cookie authentication (cookie: admin_session=authenticated)
+- Added auth middleware in orders.tsx loader - redirects to /admin/login if not authenticated
+- Fixed cookie value mismatch between client and server
+- Updated biome.json to ignore routeTree.gen.ts from formatter
+- Biome lint passes
+
+**Files changed:**
+- muse-frame/src/routes/admin/login.tsx (new)
+- muse-frame/src/routes/api/admin/-login.ts (new)
+- muse-frame/src/routes/api/admin/-logout.ts (new)
+- muse-frame/src/routes/admin/orders.tsx (modified - added auth check)
+- muse-frame/src/lib/server/admin.ts (new - admin functions for orders)
+- muse-frame/biome.json (modified - added routeTree.gen.ts to formatter ignore)
+- muse-frame/scripts/ralph/prd.json (modified - US-017 passes: true)
+
+**Learnings for future iterations:**
+- HTTP-only cookies prevent client-side JavaScript from accessing the session (more secure)
+- Server sets authentication cookie via Set-Cookie header - client doesn't need to set it
+- Cookie validation should look for specific value (admin_session=authenticated), not just presence
+- Route loaders run server-side and can use getRequest() to access headers
+- routeTree.gen.ts is auto-generated and should be excluded from formatting to avoid noise
+- Auth middleware should redirect to login page using throw redirect() pattern in loaders

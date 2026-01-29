@@ -25,8 +25,7 @@ function AdminLoginPage() {
       const data = await response.json()
 
       if (data.success) {
-        // Set admin session cookie
-        document.cookie = 'admin_session=true; path=/; max-age=86400'
+        // Server sets HTTP-only cookie, just redirect
         window.location.href = '/admin/orders'
       } else {
         setError(data.error || 'Login failed')

@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { getRequest } from '@tanstack/react-start/server'
 import { useEffect, useState } from 'react'
 import {
   type OrderListItem,
@@ -9,13 +10,34 @@ import {
 } from '~/lib/server/admin'
 
 export const Route = createFileRoute('/admin/orders')({
-  component: AdminOrdersPage,
   loader: () => {
+    const request = getRequest()
+    const cookieHeader = request.headers.get('Cookie') || ''
+    const hasAdminSession = cookieHeader.includes('admin_session=authenticated')
+
+    if (!hasAdminSession) {
+      throw redirect({ to: '/admin/login', throw: true })
+    }
+
     return {
       orders: getAdminOrders(),
       summary: getOrderSummary(),
     }
   },
+  errorComponent: () => {
+    return (
+      <div className="error-page">
+        <div className="container">
+          <h1>Unauthorized</h1>
+          <p>You need to log in to access the admin dashboard.</p>
+          <a href="/admin/login" className="submit-button">
+            Go to Login
+          </a>
+        </div>
+      </div>
+    )
+  },
+  component: AdminOrdersPage,
 })
 
 function AdminOrdersPage() {
