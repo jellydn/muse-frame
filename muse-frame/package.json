@@ -33,7 +33,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/uuid": "^11.0.0",
     "@vitejs/plugin-react": "^5.1.2",
-    "better-sqlite3": "^12.6.2",
+    "better-sqlite3": "^13.0.0",
     "drizzle-kit": "^0.31.8",
     "playwright": "^1.58.0",
     "typescript": "^5.6.3",
